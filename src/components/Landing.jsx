@@ -73,7 +73,7 @@ export default function Landing({ onStart }) {
     <main className="flex h-dvh flex-col overflow-hidden">
       <div className="mx-auto flex w-full max-w-[1360px] min-h-0 flex-1 flex-col gap-3 px-3 pb-[max(12px,env(safe-area-inset-bottom))] sm:px-5 lg:gap-4 lg:px-6 lg:pb-6 short:gap-2! short:px-2! short:pb-2!">
         <header className="flex flex-none items-center justify-between px-1 pt-3 sm:pt-4 lg:pt-5 short:pt-2!">
-          <Logo className="h-7 w-auto sm:h-8 short:h-6!" />
+          <Logo className="text-[19px] sm:text-[22px] short:text-[17px]!" />
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12px] font-medium text-ink-2">
             <Lock className="h-3.5 w-3.5 text-red" aria-hidden="true" /> Secure checkout
           </span>

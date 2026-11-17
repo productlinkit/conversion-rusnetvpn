@@ -26,10 +26,7 @@ export default function FlowShell({ stage = 0, plan, onBack, children }) {
               <ArrowLeft className="h-[18px] w-[18px]" />
             </button>
           )}
-          {/* the logo's red shield and "VPN" need a light ground to read on deep red */}
-          <span className="inline-flex items-center rounded-full bg-white px-3 py-1.5 lg:px-4 lg:py-2">
-            <Logo className="h-[18px] w-auto sm:h-5 lg:h-6" />
-          </span>
+          <Logo light className="text-[17px] sm:text-[19px] lg:text-[23px]" />
           {/* phones: where you are, in words, instead of the stepper */}
           <span className="ml-auto text-right leading-tight lg:hidden">
             <span className="block text-[11px] font-medium text-white/65">Step {stage + 1} of {STEPS.length}</span>
