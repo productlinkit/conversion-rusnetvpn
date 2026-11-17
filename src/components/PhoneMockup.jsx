@@ -1,38 +1,36 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
-  Power, Zap, RefreshCw, Home, Server, LayoutGrid, AlertCircle, Search, ChevronDown, ChevronUp, ChevronRight,
-  ShieldCheck, Cloud, Bell, Crown, Headphones, FileText, MapPin, LogOut,
+  Crown, User, Power, Home, Server, LayoutGrid, Search, RefreshCw, Zap, Check, Heart, ChevronDown, ChevronUp,
+  Lock, Download, ShieldCheck, Smartphone, Wifi, SlidersHorizontal, Bell, ChevronRight, MapPin,
 } from 'lucide-react'
 
-// A coded version of the real RusVPN app (Home, Server List, Menu) so the demo
-// can walk through it: pick a server, connect, open the menu. It is a looped
-// demo, not a live connection.
-//
-// Each scene: which screen is up, the VPN state, and what is being tapped.
+// A coded copy of the real app at rusnetvpn-app.vercel.app (Home, Select Server,
+// Menu), looped like a video: pick a server, connect, look at the menu.
+// The screens are laid out at the app's own 390px width and scaled into the
+// device, so sizes below match the live app one to one.
 const SCENES = [
-  { screen: 'home', vpn: 'off', ms: 1000 },
-  { screen: 'home', vpn: 'off', tap: 'tab-servers', ms: 350 },
-  { screen: 'servers', vpn: 'off', ms: 750 },
-  { screen: 'servers', vpn: 'off', tap: 'country', ms: 350 },
-  { screen: 'servers', vpn: 'off', open: true, ms: 700 },
-  { screen: 'servers', vpn: 'off', open: true, tap: 'city', ms: 450 },
-  { screen: 'home', vpn: 'off', tap: 'connect', ms: 550 },
-  { screen: 'home', vpn: 'connecting', ms: 1000 },
-  { screen: 'home', vpn: 'on', ms: 1500 },
-  { screen: 'home', vpn: 'on', tap: 'tab-menu', ms: 350 },
-  { screen: 'menu', vpn: 'on', ms: 1700 },
-  { screen: 'menu', vpn: 'on', tap: 'tab-home', ms: 350 },
-  { screen: 'home', vpn: 'on', ms: 800 },
-  { screen: 'home', vpn: 'on', tap: 'connect', ms: 400 },
+  { screen: 'home', vpn: 'off', ms: 1300 },
+  { screen: 'home', vpn: 'off', tap: 'tab-servers', ms: 380 },
+  { screen: 'servers', vpn: 'off', ms: 900 },
+  { screen: 'servers', vpn: 'off', tap: 'country', ms: 380 },
+  { screen: 'servers', vpn: 'off', open: true, ms: 900 },
+  { screen: 'servers', vpn: 'off', open: true, tap: 'city', ms: 500 },
+  { screen: 'home', vpn: 'off', ms: 700 },
+  { screen: 'home', vpn: 'off', tap: 'connect', ms: 420 },
+  { screen: 'home', vpn: 'connecting', ms: 1500 },
+  { screen: 'home', vpn: 'on', ms: 2600 },
+  { screen: 'home', vpn: 'on', tap: 'tab-menu', ms: 380 },
+  { screen: 'menu', vpn: 'on', ms: 2200 },
+  { screen: 'menu', vpn: 'on', tap: 'tab-home', ms: 380 },
+  { screen: 'home', vpn: 'on', ms: 1200 },
+  { screen: 'home', vpn: 'on', tap: 'connect', ms: 420 },
 ]
 const STILL = { screen: 'home', vpn: 'on' }
 
-// where each scene starts on the loop's timeline, for the video-style progress bar
 export const LOOP_MS = SCENES.reduce((t, sc) => t + sc.ms, 0)
 const STARTS = SCENES.map((_, i) => SCENES.slice(0, i).reduce((t, sc) => t + sc.ms, 0))
 
-// Drives the looped demo. Reduced motion parks it on the connected home screen.
 export function useDemoLoop() {
   const reduce = useReducedMotion()
   const [i, setI] = useState(0)
@@ -44,31 +42,19 @@ export function useDemoLoop() {
   return reduce ? STILL : { ...SCENES[i], index: i, start: STARTS[i] }
 }
 
-/* ---------- flags (simple, recognisable at 20px) ---------- */
-const stripesH = (a, b, c) => <><rect width="30" height="20" fill={b} /><rect width="30" height="6.67" fill={a} /><rect y="13.33" width="30" height="6.67" fill={c} /></>
-const stripesV = (a, b, c) => <><rect width="10" height="20" fill={a} /><rect x="10" width="10" height="20" fill={b} /><rect x="20" width="10" height="20" fill={c} /></>
+const RED = 'linear-gradient(100deg,#C8102E 0%,#E3262F 55%,#F5544F 100%)'
+const RED_CARD = 'radial-gradient(120% 140% at 0% 0%,#FF8A8A 0%,#E9283A 45%,#DF1F33 70%,#F4574F 100%)'
+
+/* ---------- flags ---------- */
 const FLAGS = {
-  au: <><rect width="30" height="20" fill="#012169" /><path d="M0 0l15 10M15 0L0 10" stroke="#fff" strokeWidth="2.4" /><path d="M0 0l15 10M15 0L0 10" stroke="#C8102E" strokeWidth="1" /><path d="M7.5 0v10M0 5h15" stroke="#fff" strokeWidth="3.2" /><path d="M7.5 0v10M0 5h15" stroke="#C8102E" strokeWidth="1.8" /><g fill="#fff"><circle cx="7.5" cy="15" r="1.6" /><circle cx="22.5" cy="4" r=".9" /><circle cx="26" cy="9" r=".9" /><circle cx="19.5" cy="9.5" r=".9" /><circle cx="22.5" cy="16" r="1" /></g></>,
-  at: stripesH('#ED2939', '#fff', '#ED2939'),
-  be: stripesV('#000', '#FAE042', '#ED2939'),
-  ca: <><rect width="30" height="20" fill="#fff" /><rect width="7.5" height="20" fill="#D52B1E" /><rect x="22.5" width="7.5" height="20" fill="#D52B1E" /><path d="M15 4l1.6 3 2.4-.8-.9 3.6 1.9.4-3.5 3h-3l-3.5-3 1.9-.4-.9-3.6 2.4.8z" fill="#D52B1E" /><rect x="14.4" y="13" width="1.2" height="3" fill="#D52B1E" /></>,
-  de: stripesH('#000', '#DD0000', '#FFCE00'),
-  fr: stripesV('#002395', '#fff', '#ED2939'),
-  it: stripesV('#009246', '#fff', '#CE2B37'),
-  es: <><rect width="30" height="20" fill="#AA151B" /><rect y="5" width="30" height="10" fill="#F1BF00" /></>,
-  se: <><rect width="30" height="20" fill="#006AA7" /><rect x="9" width="3.5" height="20" fill="#FECC00" /><rect y="8.25" width="30" height="3.5" fill="#FECC00" /></>,
-  bg: stripesH('#fff', '#00966E', '#D62612'),
-  cl: <><rect width="30" height="20" fill="#fff" /><rect y="10" width="30" height="10" fill="#D52B1E" /><rect width="10" height="10" fill="#0039A6" /><path d="M5 2.6l.9 2.6h2.7l-2.2 1.6.8 2.6L5 7.8 2.8 9.4l.8-2.6-2.2-1.6h2.7z" fill="#fff" /></>,
-  cn: <><rect width="30" height="20" fill="#DE2910" /><path d="M6 2.5l1.1 3.2h3.4l-2.7 2 1 3.2L6 8.9 3.2 10.9l1-3.2-2.7-2h3.4z" fill="#FFDE00" /></>,
-  cr: <><rect width="30" height="20" fill="#002B7F" /><rect y="3.33" width="30" height="13.33" fill="#fff" /><rect y="6.67" width="30" height="6.67" fill="#CE1126" /></>,
-  ch: <><rect width="30" height="20" fill="#DA291C" /><rect x="13" y="4" width="4" height="12" fill="#fff" /><rect x="9" y="8" width="12" height="4" fill="#fff" /></>,
-  jp: <><rect width="30" height="20" fill="#fff" /><circle cx="15" cy="10" r="5.6" fill="#BC002D" /></>,
-  nl: stripesH('#AE1C28', '#fff', '#21468B'),
-  gb: <><rect width="30" height="20" fill="#012169" /><path d="M0 0l30 20M30 0L0 20" stroke="#fff" strokeWidth="4" /><path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" strokeWidth="1.6" /><path d="M15 0v20M0 10h30" stroke="#fff" strokeWidth="6" /><path d="M15 0v20M0 10h30" stroke="#C8102E" strokeWidth="3.4" /></>,
-  us: <><rect width="30" height="20" fill="#fff" />{[0, 2, 4, 6, 8, 10, 12].map((i) => <rect key={i} y={i * 20 / 13} width="30" height={20 / 13} fill="#B22234" />)}<rect width="13" height={20 * 7 / 13} fill="#3C3B6E" /></>,
+  ru: <><rect width="30" height="20" fill="#fff" /><rect y="6.67" width="30" height="6.67" fill="#0039A6" /><rect y="13.33" width="30" height="6.67" fill="#D52B1E" /></>,
+  kz: <><rect width="30" height="20" fill="#00AFCA" /><circle cx="15" cy="10" r="3.6" fill="#FEC50C" /><rect x="2" width="1.6" height="20" fill="#FEC50C" /></>,
+  tr: <><rect width="30" height="20" fill="#E30A17" /><circle cx="11.5" cy="10" r="5" fill="#fff" /><circle cx="12.8" cy="10" r="4" fill="#E30A17" /><circle cx="18" cy="10" r="1.6" fill="#fff" /></>,
+  ar: <><rect width="30" height="20" fill="#74ACDF" /><rect y="6.67" width="30" height="6.67" fill="#fff" /><circle cx="15" cy="10" r="1.8" fill="#F6B40E" /></>,
+  am: <><rect width="30" height="20" fill="#D90012" /><rect y="6.67" width="30" height="6.67" fill="#0033A0" /><rect y="13.33" width="30" height="6.67" fill="#F2A800" /></>,
 }
-function Flag({ code, className = 'h-3.5 w-5' }) {
-  return <svg viewBox="0 0 30 20" className={`${className} flex-none rounded-[2px] ring-1 ring-black/10`} aria-hidden="true">{FLAGS[code]}</svg>
+function Flag({ code, className = '' }) {
+  return <svg viewBox="0 0 30 20" preserveAspectRatio="none" className={`flex-none rounded-[6px] ring-1 ring-black/10 ${className}`} aria-hidden="true">{FLAGS[code]}</svg>
 }
 
 /* ---------- tap indicator ---------- */
@@ -77,7 +63,7 @@ function Tap({ show, className = '' }) {
     <AnimatePresence>
       {show && (
         <motion.span
-          className={`pointer-events-none absolute z-20 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink/25 ring-2 ring-white/80 ${className}`}
+          className={`pointer-events-none absolute z-30 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1F1416]/25 ring-[3px] ring-white/85 ${className}`}
           initial={{ scale: .3, opacity: 0 }}
           animate={{ scale: [0.3, 1, 0.85], opacity: [0, 1, .9] }}
           exit={{ scale: 1.6, opacity: 0 }}
@@ -89,119 +75,223 @@ function Tap({ show, className = '' }) {
 }
 
 const screenAnim = {
-  initial: { opacity: 0, x: 14 },
-  animate: { opacity: 1, x: 0, transition: { duration: .25, ease: [.21, .78, .26, 1] } },
-  exit: { opacity: 0, x: -14, transition: { duration: .14 } },
+  initial: { opacity: 0, x: 18 },
+  animate: { opacity: 1, x: 0, transition: { duration: .28, ease: [.21, .78, .26, 1] } },
+  exit: { opacity: 0, x: -18, transition: { duration: .15 } },
 }
 
-/* ---------- screens ---------- */
+/* ---------- Home ---------- */
+function Globe({ vpn }) {
+  const on = vpn === 'on'
+  return (
+    <svg viewBox="0 0 390 330" className="block h-[282px] w-[333px]" aria-hidden="true">
+      <defs>
+        <radialGradient id="pm-sphere" cx="38%" cy="30%" r="75%">
+          <stop offset="0" stopColor="#FFF6F6" />
+          <stop offset=".55" stopColor="#FAD2D3" />
+          <stop offset="1" stopColor="#F0A9AC" />
+        </radialGradient>
+        <clipPath id="pm-clip"><circle cx="195" cy="162" r="131" /></clipPath>
+      </defs>
+      <circle cx="195" cy="162" r="162" fill="none" stroke="#F6D9DB" strokeWidth="1" />
+      <circle cx="195" cy="162" r="148" fill="#FFF7F7" stroke="#F3D3D5" strokeWidth="1" />
+      <circle cx="195" cy="162" r="131" fill="url(#pm-sphere)" stroke="#E4A2A6" strokeWidth="1.2" />
+      <g clipPath="url(#pm-clip)" fill="none" stroke="#D9858C" strokeOpacity=".55" strokeWidth="1">
+        {[46, 92].map((rx) => <ellipse key={rx} cx="195" cy="162" rx={rx} ry="131" />)}
+        <line x1="195" y1="31" x2="195" y2="293" />
+        {[[-92, 96, 18], [-44, 126, 26], [0, 131, 30], [44, 126, 26], [92, 96, 18]].map(([dy, rx, ry]) => (
+          <ellipse key={dy} cx="195" cy={162 + dy} rx={rx} ry={ry} />
+        ))}
+      </g>
+      {/* route */}
+      <motion.path
+        d="M135 227 C 140 145, 188 112, 240 137"
+        fill="none"
+        stroke={on ? '#D7192D' : '#E9848C'}
+        strokeWidth={on ? 3 : 3}
+        strokeLinecap="round"
+        strokeDasharray={on ? '0 0' : '5 6'}
+        animate={vpn === 'connecting' ? { strokeDashoffset: [0, -22] } : { strokeDashoffset: 0 }}
+        transition={vpn === 'connecting' ? { duration: .6, repeat: Infinity, ease: 'linear' } : { duration: .2 }}
+      />
+      <circle cx="240" cy="137" r="17" fill={on ? '#F2A2A8' : '#F0B8BC'} opacity=".55" />
+      {on && <motion.circle cx="240" cy="137" r="12" fill="none" stroke="#E3262F" strokeWidth="2" initial={{ scale: 1, opacity: .8 }} animate={{ scale: 1.9, opacity: 0 }} transition={{ duration: 1.4, repeat: Infinity }} style={{ transformOrigin: '240px 137px' }} />}
+      <circle cx="240" cy="137" r="8.5" fill={on ? '#E3262F' : '#E7A1A7'} />
+      <circle cx="135" cy="227" r="7.5" fill="#fff" stroke="#E3262F" strokeWidth="3" />
+      <text x="208" y="111" fontSize="16.5" fontWeight="500" fill="#1F1416" stroke="#fff" strokeWidth="3" paintOrder="stroke">Novosibirsk</text>
+      <text x="106" y="258" fontSize="16.5" fontWeight="500" fill="#1F1416" stroke="#fff" strokeWidth="3" paintOrder="stroke">You</text>
+    </svg>
+  )
+}
+
+function useTimer(running) {
+  const [s, setS] = useState(0)
+  useEffect(() => {
+    if (!running) { setS(0); return }
+    const t = setInterval(() => setS((n) => n + 1), 1000)
+    return () => clearInterval(t)
+  }, [running])
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`
+}
+
+function useSpeeds(on) {
+  const [v, setV] = useState([84.2, 21.6])
+  useEffect(() => {
+    if (!on) return
+    const t = setInterval(() => setV([80 + Math.random() * 9, 19 + Math.random() * 5]), 1100)
+    return () => clearInterval(t)
+  }, [on])
+  return v
+}
+
 function HomeScreen({ vpn, tap }) {
-  const reduce = useReducedMotion()
   const on = vpn === 'on'
   const connecting = vpn === 'connecting'
+  const time = useTimer(on)
+  const [down, up] = useSpeeds(on)
   return (
-    <motion.div {...screenAnim} className="absolute inset-0 flex flex-col">
-      <motion.div
-        className="relative flex min-h-0 flex-1 flex-col items-center justify-center pt-5"
-        animate={{ background: on ? 'linear-gradient(180deg,#ECE7F7 0%,#E3DCF2 100%)' : 'linear-gradient(180deg,#E9EEF7 0%,#DCE4F2 100%)' }}
-        transition={{ duration: .8 }}
-      >
-        <div className="relative grid aspect-square w-[78%] place-items-center">
-          <span className="absolute inset-0 rounded-full bg-white/35" />
-          <span className="absolute inset-[16%] rounded-full bg-white/55" />
-          {connecting && !reduce && (
-            <>
-              <motion.span className="absolute inset-[16%] rounded-full border-2 border-red/40" initial={{ scale: .8, opacity: .9 }} animate={{ scale: 1.25, opacity: 0 }} transition={{ duration: 1.2, repeat: Infinity }} />
-              <motion.span className="absolute inset-[30%] rounded-full border-2 border-b-transparent border-l-transparent border-r-transparent border-t-red" animate={{ rotate: 360 }} transition={{ duration: .9, repeat: Infinity, ease: 'linear' }} />
-            </>
-          )}
-          <motion.span
-            className="relative grid aspect-square w-[42%] place-items-center rounded-full shadow-[0_12px_30px_-12px_rgba(40,40,90,.45)]"
-            animate={{ background: on ? 'linear-gradient(180deg,#C9BCEB,#AE9EDF)' : 'linear-gradient(180deg,#C3CFEA,#92A6D6)' }}
-            transition={{ duration: .8 }}
-          >
-            <Power className={`h-[42%] w-[42%] transition-colors duration-700 ${on ? 'text-white' : 'text-red-deep'}`} strokeWidth={2.2} />
-          </motion.span>
-        </div>
-        <p className="mt-1 text-[10.5px] font-medium text-ink-2/80">
-          {on ? 'Your connection is protected' : connecting ? 'Connecting…' : 'Current internet status'}
-        </p>
-      </motion.div>
+    <motion.div {...screenAnim} className="absolute inset-0 bg-[linear-gradient(160deg,#FFFFFF_0%,#FFFFFF_55%,#FDECEC_100%)]">
+      {/* header */}
+      <div className="absolute inset-x-0 top-[22px] flex items-center justify-between px-[22px]">
+        <span className="text-[25px] font-extrabold tracking-[-.04em] text-[#1F1416]">Rusnet<span className="text-[#E3262F]">VPN</span></span>
+        <span className="flex items-center gap-2.5">
+          <span className="flex h-[34px] items-center gap-1.5 rounded-full px-4 text-[14px] font-bold text-white shadow-[0_10px_20px_-10px_rgba(200,16,46,.8)]" style={{ background: RED }}>
+            <Crown className="h-4 w-4" strokeWidth={2.2} /> Upgrade
+          </span>
+          <span className="grid h-[42px] w-[42px] place-items-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(31,20,22,.35)]"><User className="h-5 w-5 text-[#1F1416]" strokeWidth={2} /></span>
+        </span>
+      </div>
 
-      <div className="relative -mt-4 rounded-t-[1.4rem] bg-white px-4 pb-2 pt-4 shadow-[0_-10px_30px_-20px_rgba(14,18,22,.3)]">
-        <div className="relative h-10">
-          <AnimatePresence mode="wait" initial={false}>
-            {on ? (
-              <motion.div key="dis" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: .3 }}
-                className="absolute inset-0 flex items-center justify-center gap-1.5 rounded-full border-[1.5px] border-red text-[13px] font-semibold text-red">
-                <AlertCircle className="h-3.5 w-3.5" /> Disconnect
-              </motion.div>
-            ) : (
-              <motion.div key="con" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: .3 }}
-                className="absolute inset-0 flex items-center justify-center rounded-full bg-red text-[13px] font-semibold text-white">
-                {connecting ? 'Connecting…' : 'Connect'}
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <Tap show={tap === 'connect'} className="left-1/2 top-1/2" />
-        </div>
+      {/* status pill */}
+      <div className="absolute inset-x-0 top-[76px] flex justify-center">
+        <span className="flex h-[34px] items-center gap-2.5 rounded-full bg-white px-5 text-[14px] font-medium text-[#1F1416] shadow-[0_6px_20px_-10px_rgba(31,20,22,.3)]">
+          <span className={`h-2 w-2 rounded-full ${on ? 'bg-[#E3262F] ring-4 ring-[#E3262F]/15' : connecting ? 'bg-[#F9D49B]' : 'bg-[#B9AFB1]'}`} />
+          {on ? 'Connected' : connecting ? 'Connecting…' : 'Not connected'}
+        </span>
+      </div>
 
-        <div className="mt-3 flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#EEF3FF] px-2 py-1 text-[9.5px] font-semibold text-[#3B4A6B]"><Zap className="h-2.5 w-2.5 fill-amber-400 text-amber-400" /> Fastest</span>
-          <Flag code="au" className="ml-1 h-4 w-6" />
-          <span className="flex-1 text-[11px] leading-tight text-ink-2"><b className="font-semibold">Australia</b><br /><span className="text-muted">Melbourne</span></span>
-          <RefreshCw className="h-3.5 w-3.5 text-muted" />
-        </div>
+      <div className="absolute left-[28px] top-[116px]"><Globe vpn={vpn} /></div>
 
-        <p className="mt-2.5 text-[9.5px] font-semibold text-ink">Quick Connect</p>
-        <div className="mt-1.5 grid grid-cols-3 gap-1.5">
-          {[['us', 'United States'], ['gb', 'United Kingdom'], ['jp', 'Japan']].map(([c, n]) => (
-            <div key={c} className="flex flex-col items-center gap-1 rounded-lg bg-paper px-1 py-1.5">
-              <Flag code={c} />
-              <span className="w-full truncate text-center text-[8.5px] font-medium text-ink-2">{n}</span>
+      {/* server card */}
+      <div className="absolute inset-x-[20px] top-[404px] rounded-[32px] border border-[#F4E4E5] bg-white px-[18px] pb-[18px] pt-[22px] shadow-[0_20px_40px_-30px_rgba(31,20,22,.35)]">
+        <div className="flex items-center gap-3">
+          <Flag code="ru" className="h-[28px] w-[37px]" />
+          <span className="min-w-0 flex-1 leading-tight">
+            <b className="block text-[17px] font-bold text-[#1F1416]">Russia</b>
+            <span className="text-[13px] text-[#6E6064]">Novosibirsk · 40 ms</span>
+          </span>
+          <span className="rounded-full bg-[#FCE6E8] px-4 py-[7px] text-[14px] font-bold text-[#C8102E]">Change</span>
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="tnum text-[38px] font-extrabold tracking-[-.02em] text-[#1F1416]">{time}</span>
+          <span className="text-[13px] text-[#6E6064]">{on ? 'Connected time' : connecting ? 'Securing…' : 'Ready to connect'}</span>
+        </div>
+        <div className="mt-2.5 grid grid-cols-3 gap-2.5">
+          {[['Download', on ? down.toFixed(1) : '—', 'Mb/s'], ['Upload', on ? up.toFixed(1) : '—', 'Mb/s'], ['Data left', '∞', 'Unlimited']].map(([l, v, u]) => (
+            <div key={l} className="rounded-[18px] border border-[#F1E4E5] bg-[#FFFCFC] px-3 py-2.5">
+              <span className="block text-[12.5px] text-[#6E6064]">{l}</span>
+              <span className="tnum mt-1 block whitespace-nowrap text-[19px] font-bold leading-none text-[#1F1416]">{v} <span className="text-[12px] font-medium text-[#6E6064]">{u}</span></span>
             </div>
           ))}
+        </div>
+        <div className="relative mt-4 h-[58px]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span key={vpn}
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: .25 }}
+              className="absolute inset-0 flex items-center justify-center gap-3 rounded-full text-[17px] font-bold text-white shadow-[0_16px_30px_-16px_rgba(200,16,46,.9)]"
+              style={{ background: connecting ? 'linear-gradient(100deg,#3A2A2D,#1F1416)' : RED }}>
+              <Power className="h-5 w-5" strokeWidth={2.4} />
+              {on ? 'Disconnect' : connecting ? 'Cancel' : 'Connect'}
+            </motion.span>
+          </AnimatePresence>
+          <Tap show={tap === 'connect'} className="left-1/2 top-1/2" />
         </div>
       </div>
     </motion.div>
   )
 }
 
-// Matches the app's Server List: title + round search button, big flags,
-// closed countries in slate, the open one listing its named servers.
-const COUNTRIES = [['au', 'Australia'], ['at', 'Austria'], ['be', 'Belgium'], ['bg', 'Bulgaria'], ['ca', 'Canada'], ['cl', 'Chile'], ['cn', 'China'], ['cr', 'Costa-rica']]
-const SERVERS = ['The City Server', 'Lightning Speed', 'Stealth Mode']
+/* ---------- Select Server ---------- */
+const COUNTRIES = [
+  { code: 'ru', name: 'Russia', sub: '4 locations', ms: 40 },
+  { code: 'kz', name: 'Kazakhstan', sub: '2 locations', ms: 58 },
+  { code: 'tr', name: 'Turkey', sub: '2 locations', ms: 41 },
+  { code: 'ar', name: 'Argentina', sub: '1 location', pro: true },
+  { code: 'am', name: 'Armenia', sub: '1 location', pro: true },
+]
+const CITIES = [['Moscow', 67], ['Saint Petersburg', 97], ['Novosibirsk', 40], ['Yekaterinburg', 117]]
+
+function Signal() {
+  return <span className="flex h-[14px] items-end gap-[2px]">{[6, 10, 14].map((h) => <i key={h} className="block w-[3px] rounded-[1px] bg-[#16A34A]" style={{ height: h }} />)}</span>
+}
 
 function ServersScreen({ open, tap }) {
   return (
-    <motion.div {...screenAnim} className="absolute inset-0 flex flex-col bg-white px-4 pt-9">
-      <div className="flex items-center justify-between">
-        <p className="text-[18px] font-semibold tracking-[-.02em] text-ink">Server List</p>
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-paper-2"><Search className="h-3.5 w-3.5 text-ink" /></span>
+    <motion.div {...screenAnim} className="absolute inset-0 bg-white px-[20px]">
+      <div className="mt-[28px] flex items-center justify-between">
+        <span className="text-[23px] font-bold tracking-[-.03em] text-[#1F1416]">Select Server</span>
+        <span className="grid h-[40px] w-[40px] place-items-center rounded-full border border-[#EFE6E7] bg-white"><RefreshCw className="h-[18px] w-[18px] text-[#1F1416]" /></span>
       </div>
-      <ul className="mt-3 min-h-0 flex-1 overflow-hidden">
-        {COUNTRIES.map(([c, n], i) => {
+      <div className="mt-4 flex h-[46px] items-center gap-3 rounded-full border border-[#EEE4E5] px-4 text-[14.5px] text-[#8A7B7F]">
+        <Search className="h-[18px] w-[18px] text-[#6E6064]" /> Search countries, cities, or IP…
+      </div>
+      <div className="mt-4 flex items-center gap-3 rounded-[26px] px-4 py-[18px] text-white shadow-[0_18px_30px_-18px_rgba(223,31,51,.9)]" style={{ background: RED_CARD }}>
+        <span className="grid h-[46px] w-[46px] place-items-center rounded-full bg-white/20"><Zap className="h-5 w-5" strokeWidth={2} /></span>
+        <span className="min-w-0 flex-1 leading-tight">
+          <span className="block text-[11.5px] font-bold tracking-[.06em] text-white/80">SMART LOCATION</span>
+          <b className="mt-0.5 block text-[17px] font-bold">Fastest server</b>
+          <span className="text-[13px] text-white/90">Novosibirsk, Russia · 40 ms</span>
+        </span>
+        <span className="grid h-[36px] w-[36px] place-items-center rounded-full bg-[#1F1416]"><Check className="h-[18px] w-[18px]" strokeWidth={2.6} /></span>
+      </div>
+      <div className="mt-4 grid grid-cols-2 rounded-[22px] bg-[#F9EEF0] p-[5px] text-[14.5px] font-semibold">
+        <span className="rounded-[18px] py-[12px] text-center text-white" style={{ background: RED }}>All Servers</span>
+        <span className="py-[12px] text-center text-[#6E6064]">Favorites</span>
+      </div>
+      <div className="mt-5 flex items-center justify-between px-1">
+        <b className="text-[15px] font-bold text-[#1F1416]">All locations</b>
+        <span className="text-[12.5px] text-[#6E6064]">14 countries</span>
+      </div>
+      <ul className="mt-2.5 space-y-2.5">
+        {COUNTRIES.map((c, i) => {
           const isOpen = i === 0 && open
           return (
-            <li key={c} className={isOpen ? '' : 'border-b border-ink/25'}>
-              <div className="relative flex items-center gap-3.5 py-[13px]">
-                <Flag code={c} className="h-[17px] w-[26px] rounded-[3px]" />
-                <span className={`flex-1 text-[11.5px] font-semibold ${isOpen ? 'text-ink' : 'text-[#5D6B82]'}`}>{n}</span>
-                {isOpen ? <ChevronUp className="h-3.5 w-3.5 text-ink" /> : <ChevronDown className="h-3.5 w-3.5 text-ink" />}
-                {i === 0 && <Tap show={tap === 'country'} className="left-[40%] top-1/2" />}
+            <li key={c.code} className="relative rounded-[24px] border border-[#F2E6E7] bg-white px-[14px]">
+              <div className="flex h-[68px] items-center gap-3">
+                <Flag code={c.code} className="h-[30px] w-[42px]" />
+                <span className="min-w-0 flex-1 leading-tight">
+                  <b className="block text-[15.5px] font-bold text-[#1F1416]">{c.name}</b>
+                  <span className="text-[12.5px] text-[#6E6064]">{c.sub}</span>
+                </span>
+                {c.pro ? (
+                  <>
+                    <span className="rounded-full bg-[#FCE6E8] px-3 py-1 text-[12px] font-bold text-[#C8102E]">PRO</span>
+                    <span className="grid h-[36px] w-[36px] place-items-center rounded-full bg-[#FCE6E8]"><Lock className="h-4 w-4 text-[#C8102E]" /></span>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex items-center gap-1.5 text-[12.5px] font-medium text-[#1F1416]"><Signal />{c.ms} ms</span>
+                    <span className="grid h-[36px] w-[36px] place-items-center rounded-full bg-[#F7F0F1]"><Heart className="h-4 w-4 text-[#B9AFB1]" /></span>
+                    <span className="grid h-[36px] w-[36px] place-items-center rounded-full bg-[#F7F0F1]">{isOpen ? <ChevronUp className="h-4 w-4 text-[#1F1416]" /> : <ChevronDown className="h-4 w-4 text-[#B9AFB1]" />}</span>
+                  </>
+                )}
+                {i === 0 && <Tap show={tap === 'country'} className="left-[45%] top-[34px]" />}
               </div>
               {i === 0 && (
                 <AnimatePresence initial={false}>
                   {isOpen && (
-                    <motion.ul initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: .22 }} className="overflow-hidden">
-                      {SERVERS.map((name, j) => {
-                        const picked = j === 0 && tap === 'city'
+                    <motion.ul initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: .25 }} className="overflow-hidden">
+                      {CITIES.map(([name, ms]) => {
+                        const picked = name === 'Novosibirsk'
+                        const hit = picked && tap === 'city'
                         return (
-                          <li key={name} className={`relative flex items-center gap-2.5 rounded-lg py-[9px] pl-2 pr-1 text-[9.5px] text-ink transition-colors ${picked ? 'bg-red-tint' : ''}`}>
-                            <MapPin className="h-3.5 w-3.5 flex-none" strokeWidth={1.8} />
-                            <span className="flex-1 font-medium tracking-[.01em]">{name}</span>
-                            <span className={`h-3 w-3 flex-none rounded-full border-[1.5px] border-red ${picked ? 'bg-red' : ''}`} />
-                            {j === 0 && <Tap show={tap === 'city'} className="left-[40%] top-1/2" />}
+                          <li key={name} className={`relative mb-1.5 flex h-[44px] items-center gap-2.5 rounded-[14px] px-3 text-[13.5px] transition-colors ${hit || picked ? 'bg-[#FCE6E8]' : 'bg-[#FBF6F6]'}`}>
+                            <MapPin className={`h-4 w-4 ${picked ? 'text-[#C8102E]' : 'text-[#6E6064]'}`} />
+                            <span className="flex-1 font-medium text-[#1F1416]">{name}</span>
+                            <span className="text-[12px] text-[#6E6064]">{ms} ms</span>
+                            <span className={`grid h-[18px] w-[18px] place-items-center rounded-full border-2 ${picked ? 'border-[#E3262F] bg-[#E3262F]' : 'border-[#D9CFD1]'}`}>{picked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={4} />}</span>
+                            {picked && <Tap show={tap === 'city'} className="left-[40%] top-1/2" />}
                           </li>
                         )
                       })}
@@ -213,112 +303,147 @@ function ServersScreen({ open, tap }) {
           )
         })}
       </ul>
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white to-transparent" />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
     </motion.div>
   )
 }
 
-// A year from today, written the way the app writes it ("12 March 2026").
+/* ---------- Menu ---------- */
 const EXPIRES = (() => {
   const d = new Date()
   d.setFullYear(d.getFullYear() + 1)
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 })()
 
-const MENU = [
-  ['VPN Settings', [[ShieldCheck, 'Protocols'], [Cloud, 'Connection Settings'], [Bell, 'Notification Settings'], [Crown, 'My Subscription']]],
-  ['About us', [[FileText, 'About us'], [Headphones, 'Support center'], [FileText, 'Terms and Privacy Policy'], [LogOut, 'Sign Out', true]]],
-]
+function Toggle({ on }) {
+  return (
+    <span className="relative h-[30px] w-[50px] flex-none rounded-full" style={{ background: on ? RED : '#EFE6E7' }}>
+      <span className={`absolute top-[3px] h-[24px] w-[24px] rounded-full bg-white shadow ${on ? 'left-[23px]' : 'left-[3px]'}`} />
+    </span>
+  )
+}
+
+function Row({ icon: Icon, title, sub, right }) {
+  return (
+    <li className="flex h-[64px] items-center gap-3 border-b border-[#F5ECED] px-[14px] last:border-0">
+      <span className="grid h-[40px] w-[40px] flex-none place-items-center rounded-[14px] bg-[#FDECEC]"><Icon className="h-[18px] w-[18px] text-[#D7192D]" strokeWidth={2} /></span>
+      <span className="min-w-0 flex-1 leading-tight">
+        <b className="block text-[15px] font-semibold text-[#1F1416]">{title}</b>
+        <span className="text-[12.5px] text-[#6E6064]">{sub}</span>
+      </span>
+      {right}
+    </li>
+  )
+}
 
 function MenuScreen() {
   return (
-    <motion.div {...screenAnim} className="absolute inset-0 flex flex-col bg-white px-4 pt-8">
-      <p className="text-[19px] font-semibold tracking-[-.02em] text-ink">Menu</p>
-      <div className="mt-2.5 rounded-xl bg-[#FBE7E8] px-3 pb-3 pt-3.5">
-        <div className="flex items-center gap-2.5">
-          <span className="grid h-8 w-8 flex-none place-items-center rounded-full bg-[#5E0B12]"><Crown className="h-4 w-4 fill-white text-white" /></span>
-          <span className="min-w-0 text-[9.5px] leading-[1.6] text-ink">
-            <span className="block truncate">demouser@email.com</span>
-            <span className="block">1 Year Subscription</span>
+    <motion.div {...screenAnim} className="absolute inset-0 bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_60%,#FDF1F1_100%)] px-[20px]">
+      <p className="mt-[24px] text-[30px] font-bold tracking-[-.035em] text-[#1F1416]">Menu</p>
+      <div className="relative mt-3 overflow-hidden rounded-[28px] px-[18px] pb-[18px] pt-[18px] text-white shadow-[0_20px_34px_-20px_rgba(223,31,51,.9)]" style={{ background: RED_CARD }}>
+        <span className="pointer-events-none absolute -bottom-24 -right-10 h-56 w-56 rounded-full border border-white/20" />
+        <div className="flex items-center gap-3.5">
+          <span className="grid h-[54px] w-[54px] flex-none place-items-center rounded-full bg-white"><Crown className="h-6 w-6 text-[#D7192D]" strokeWidth={2} /></span>
+          <span className="min-w-0 leading-tight">
+            <b className="block text-[17px] font-bold">RusnetVPN Premium</b>
+            <span className="text-[13px] text-white/90">demo@email.com</span>
           </span>
         </div>
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <span className="text-[8.5px] text-red-text">Expires on: {EXPIRES}</span>
-          <span className="rounded-full bg-red px-3 py-1.5 text-[9px] font-medium text-white">Expand Plan</span>
+        <div className="mt-4 flex items-center justify-between border-t border-white/25 pt-3.5">
+          <span className="leading-tight">
+            <span className="block text-[12.5px] text-white/85">1-Year plan · renews</span>
+            <b className="text-[15px] font-bold">{EXPIRES}</b>
+          </span>
+          <span className="rounded-full bg-white px-4 py-[9px] text-[14px] font-bold text-[#C8102E]">Manage</span>
         </div>
       </div>
-      {MENU.map(([group, rows]) => (
-        <div key={group} className="mt-3.5">
-          <p className="border-b border-[#5D6B82] pb-1.5 text-[16px] font-semibold tracking-[-.02em] text-ink">{group}</p>
-          <ul>
-            {rows.map(([Icon, label, danger]) => (
-              <li key={label} className={`flex items-center gap-2.5 border-b border-ink/[.06] py-[9.5px] pl-2 text-[11px] ${danger ? 'text-red' : 'text-ink'}`}>
-                <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
-                <span className="flex-1 font-medium">{label}</span>
-                <ChevronRight className="h-3 w-3 text-ink" />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div className="mt-3 grid grid-cols-3 gap-2.5">
+        {[[Download, 'Unlimited', 'Data'], [ShieldCheck, '12 m', 'Time protected'], [Smartphone, '1 / 5', 'Devices']].map(([Icon, v, l]) => (
+          <div key={l} className="rounded-[22px] bg-white px-3.5 py-3 shadow-[0_10px_24px_-16px_rgba(31,20,22,.35)]">
+            <Icon className="h-[18px] w-[18px] text-[#D7192D]" strokeWidth={2} />
+            <b className="mt-2 block text-[16px] font-bold text-[#1F1416]">{v}</b>
+            <span className="text-[11.5px] text-[#6E6064]">{l}</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 px-1 text-[13px] font-semibold text-[#6E6064]">Quick settings</p>
+      <ul className="mt-2 rounded-[22px] bg-white shadow-[0_10px_24px_-18px_rgba(31,20,22,.35)]">
+        <Row icon={Power} title="Kill switch" sub="Block internet if VPN drops" right={<Toggle on />} />
+        <Row icon={Wifi} title="Auto-connect" sub="On public Wi-Fi networks" right={<Toggle />} />
+      </ul>
+      <p className="mt-4 px-1 text-[13px] font-semibold text-[#6E6064]">VPN settings</p>
+      <ul className="mt-2 rounded-[22px] bg-white shadow-[0_10px_24px_-18px_rgba(31,20,22,.35)]">
+        <Row icon={ShieldCheck} title="Protocol" sub="WireGuard" right={<ChevronRight className="h-4 w-4 text-[#B9AFB1]" />} />
+        <Row icon={SlidersHorizontal} title="Connection settings" sub="DNS, split tunneling" right={<ChevronRight className="h-4 w-4 text-[#B9AFB1]" />} />
+        <Row icon={Bell} title="Notifications" sub="3 alerts on" right={<ChevronRight className="h-4 w-4 text-[#B9AFB1]" />} />
+      </ul>
     </motion.div>
   )
 }
 
+/* ---------- tab bar (the app's dark bar with a lifted red button) ---------- */
 const TABS = [['home', Home, 'Home'], ['servers', Server, 'Server List'], ['menu', LayoutGrid, 'Menu']]
+
+function TabBar({ screen, tap }) {
+  return (
+    <div className="absolute inset-x-[16px] bottom-[14px] z-20 grid h-[70px] grid-cols-3 rounded-[26px] bg-[#1F1A1C]">
+      {TABS.map(([key, Icon, label]) => {
+        const active = screen === key
+        return (
+          <span key={key} className="relative flex flex-col items-center justify-end pb-[9px]">
+            {active ? (
+              <motion.span layoutId="pm-tab" transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                className="absolute -top-[22px] grid h-[74px] w-[74px] place-items-center rounded-full bg-white/90">
+                <span className="grid h-[56px] w-[56px] place-items-center rounded-full shadow-[0_10px_20px_-8px_rgba(200,16,46,.9)]" style={{ background: 'linear-gradient(160deg,#E9283A,#C8102E)' }}>
+                  <Icon className="h-6 w-6 text-white" strokeWidth={2} />
+                </span>
+              </motion.span>
+            ) : (
+              <Icon className="mb-1 h-[22px] w-[22px] text-[#A99FA2]" strokeWidth={1.8} />
+            )}
+            <span className={`text-[11.5px] ${active ? 'font-bold text-white' : 'font-medium text-[#A99FA2]'}`}>{label}</span>
+            <Tap show={tap === `tab-${key}`} className="left-1/2 top-1/2" />
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
+// inner screen of the device: 286 x 600 px; the app is laid out at 390 wide
+const APP_W = 390
+const SCALE = 286 / APP_W
+const APP_H = 600 / SCALE
 
 export default function PhoneMockup({ scene, className = '' }) {
   const { screen, vpn, tap, open } = scene
   const on = vpn === 'on'
-
   return (
     <div className={`relative ${className}`}>
-      <div className="relative h-full rounded-[2.6rem] bg-ink p-[7px] shadow-[0_60px_120px_-50px_rgba(14,18,22,.55),0_30px_60px_-34px_rgba(14,18,22,.4)] ring-1 ring-black/40">
-        <div className="relative flex h-full flex-col overflow-hidden rounded-[2.15rem] bg-white">
-          {/* status bar */}
-          <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-6 pt-2.5 text-[10px] font-semibold text-ink">
-            <span className="tnum">9:41</span>
-            <span className="absolute left-1/2 top-2 h-[18px] w-[72px] -translate-x-1/2 rounded-full bg-ink" />
-            <span className="flex items-center gap-1">
-              <AnimatePresence>
-                {on && (
-                  <motion.span initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="rounded-[4px] bg-ink px-1 text-[8px] leading-[13px] text-white">VPN</motion.span>
-                )}
-              </AnimatePresence>
-              <span className="h-[9px] w-[18px] rounded-[3px] border border-ink/70 p-[1px]"><span className="block h-full w-3/4 rounded-[1px] bg-ink" /></span>
-            </span>
-          </div>
-
-          {/* screens */}
-          <div className="relative min-h-0 flex-1">
-            <AnimatePresence initial={false}>
-              {screen === 'home' && <HomeScreen key="home" vpn={vpn} tap={tap} />}
-              {screen === 'servers' && <ServersScreen key="servers" open={open} tap={tap} />}
-              {screen === 'menu' && <MenuScreen key="menu" />}
-            </AnimatePresence>
-          </div>
-
-          {/* tab bar, the same on every screen */}
-          <div className="relative z-10 bg-white px-4 pb-3 pt-1.5">
-            <div className="grid grid-cols-3 rounded-full bg-paper p-1 text-[8.5px] font-medium text-ink-2">
-              {TABS.map(([key, Icon, label]) => {
-                const active = screen === key
-                return (
-                  <span key={key} className="relative flex items-center justify-center">
-                    {active && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-full bg-white shadow-sm" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                    <span className={`relative flex items-center gap-1 py-1.5 ${active ? 'text-red' : 'text-ink-2'}`}>
-                      <Icon className="h-3 w-3" fill={active && key !== 'servers' ? 'currentColor' : 'none'} /> {label}
-                    </span>
-                    <Tap show={tap === `tab-${key}`} className="left-1/2 top-1/2" />
-                  </span>
-                )
-              })}
+      <div className="relative h-full rounded-[2.6rem] bg-[#1F1416] p-[7px] shadow-[0_60px_120px_-50px_rgba(31,20,22,.65),0_30px_60px_-34px_rgba(31,20,22,.5)] ring-1 ring-black/40">
+        <div className="relative h-full overflow-hidden rounded-[2.15rem] bg-white">
+          <div className="absolute left-0 top-0 origin-top-left" style={{ width: APP_W, height: APP_H, transform: `scale(${SCALE})` }}>
+            {/* status bar */}
+            <div className="absolute inset-x-0 top-0 z-30 flex h-[44px] items-center justify-between px-[30px] text-[14px] font-semibold text-[#1F1416]">
+              <span className="tnum">9:41</span>
+              <span className="absolute left-1/2 top-[10px] h-[26px] w-[100px] -translate-x-1/2 rounded-full bg-[#1F1416]" />
+              <span className="flex items-center gap-1.5">
+                <AnimatePresence>{on && <motion.span initial={{ opacity: 0, scale: .6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="rounded-[5px] bg-[#1F1416] px-1.5 text-[10px] leading-[16px] text-white">VPN</motion.span>}</AnimatePresence>
+                <span className="h-[12px] w-[24px] rounded-[4px] border border-[#1F1416]/70 p-[1.5px]"><span className="block h-full w-3/4 rounded-[2px] bg-[#1F1416]" /></span>
+              </span>
             </div>
+            <div className="absolute inset-x-0 bottom-0 top-[30px]">
+              <AnimatePresence initial={false}>
+                {screen === 'home' && <HomeScreen key="home" vpn={vpn} tap={tap} />}
+                {screen === 'servers' && <ServersScreen key="servers" open={open} tap={tap} />}
+                {screen === 'menu' && <MenuScreen key="menu" />}
+              </AnimatePresence>
+            </div>
+            <TabBar screen={screen} tap={tap} />
           </div>
         </div>
       </div>
-
-      <p className="sr-only">Illustration of the RusVPN app: choosing Australia, Melbourne in the server list, connecting, then opening the menu. This is an animated demo, not a live connection.</p>
+      <p className="sr-only">Illustration of the RusnetVPN app: choosing Novosibirsk, Russia in the server list, connecting, then opening the menu. This is an animated demo, not a live connection.</p>
     </div>
   )
 }

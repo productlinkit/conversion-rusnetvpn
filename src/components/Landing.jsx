@@ -149,7 +149,7 @@ export default function Landing({ onStart }) {
                           {on ? 'Protected' : scene.vpn === 'connecting' ? 'Connecting…' : 'Not connected'}
                         </motion.span>
                       </AnimatePresence>
-                      <p className="mt-2 text-[13.5px] font-semibold">Australia · Melbourne</p>
+                      <p className="mt-2 text-[13.5px] font-semibold">Russia · Novosibirsk</p>
                       <div className="mt-2.5 flex h-5 items-end gap-[3px]">
                         {Array.from({ length: 14 }).map((_, i) => (
                           <motion.i key={i} className="block flex-1 rounded-[2px]"
