@@ -10,18 +10,18 @@ export default function FailedStep({ email, plan, txId, onRetry }) {
   useEffect(() => { h.current?.focus() }, [])
 
   return (
-    <section className="text-center">
+    <section>
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-red text-white shadow-[0_20px_40px_-18px_rgba(225,29,42,.8)]">
-        <X className="h-10 w-10" strokeWidth={3} aria-hidden="true" />
+        className="grid h-16 w-16 place-items-center rounded-full bg-red text-white shadow-[0_20px_40px_-18px_rgba(225,29,42,.8)]">
+        <X className="h-8 w-8" strokeWidth={3} aria-hidden="true" />
       </motion.div>
 
-      <h1 ref={h} tabIndex={-1} className="mt-7 text-[38px] outline-none sm:text-[48px]">Payment <span className="text-red">Failed.</span></h1>
-      <p className="mx-auto mt-3 max-w-[26rem] text-[16px] leading-relaxed text-body">
+      <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">Payment <span className="text-red">Failed.</span></h1>
+      <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
         Your bank declined the payment. You haven’t been charged.
       </p>
 
-      <div className="mx-auto mt-7 rounded-[24px] bg-white p-5 text-left text-[14px]">
+      <div className="mt-6 rounded-[24px] bg-white p-5 sm:p-6 text-left text-[14px]">
         <dl className="space-y-2.5">
           <TransactionId id={txId} />
           <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusVPN · {plan.label}</dd></div>
@@ -34,7 +34,7 @@ export default function FailedStep({ email, plan, txId, onRetry }) {
         </p>
       </div>
 
-      <Button className="mt-7 w-full" onClick={onRetry}>Try again</Button>
+      <Button className="mt-6 w-full sm:w-auto sm:min-w-[280px]" onClick={onRetry}>Try again</Button>
     </section>
   )
 }

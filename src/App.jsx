@@ -118,8 +118,8 @@ export default function App() {
           {step === 'lp' && <Landing onStart={() => go('checkout')} />}
 
           {step === 'checkout' && (
-            <FlowShell step={0} wide={formOpen} onBack={() => window.history.back()}>
-              <div className={formOpen ? 'lg:grid lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-x-10' : ''}>
+            <FlowShell stage={formOpen ? 1 : 0} plan={plan} onBack={() => window.history.back()}>
+              <div>
                 <EmailStep
                   initial={email}
                   account={account}
@@ -142,25 +142,25 @@ export default function App() {
           )}
 
           {step === 'pending' && (
-            <FlowShell step={0}>
+            <FlowShell stage={1} plan={plan}>
               <PendingStep email={email} plan={plan} txId={txId} onConfirmed={() => completePayment(txId)} />
             </FlowShell>
           )}
 
           {step === 'failed' && (
-            <FlowShell step={0} onBack={() => window.history.back()}>
+            <FlowShell stage={1} plan={plan} onBack={() => window.history.back()}>
               <FailedStep email={email} plan={plan} txId={txId} onRetry={() => window.history.back()} />
             </FlowShell>
           )}
 
           {step === 'success' && (
-            <FlowShell step={1}>
+            <FlowShell stage={2} plan={plan}>
               <SuccessStep email={email} account={account} plan={plan} txId={txId} onAccess={() => go('access')} />
             </FlowShell>
           )}
 
           {step === 'access' && (
-            <FlowShell step={1}>
+            <FlowShell stage={2} plan={account === ACCOUNT.SUBSCRIBED ? null : plan}>
               <AccessStep email={email} account={account} plan={plan} />
             </FlowShell>
           )}

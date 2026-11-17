@@ -48,12 +48,16 @@ export default function EmailStep({ initial = '', account, compact = false, lock
 
   return (
     <section aria-labelledby={`${id}-h`}>
-      <h1 id={`${id}-h`} className={`text-[34px] sm:text-[44px] ${compact ? 'lg:text-[30px]' : ''}`}>Let’s Get You <span className="text-red">Connected.</span></h1>
-      <p className={`mt-3 text-[16px] leading-relaxed text-body ${compact ? 'lg:hidden' : ''}`}>
-        Enter your email address to get started.
+      <h1 id={`${id}-h`} className="px-1 text-[32px] sm:text-[42px]">Let’s get you <em className="not-italic text-red">connected.</em></h1>
+      <p className="mt-2 px-1 text-[15.5px] leading-relaxed text-body">
+        {compact ? 'Pick a plan and pay by card. Access arrives by email.' : 'Enter your email address to get started.'}
       </p>
 
-      <form onSubmit={submit} noValidate className={`mt-8 ${compact ? 'lg:mt-3' : ''}`} aria-busy={busy || undefined}>
+      <form onSubmit={submit} noValidate className="mt-6 rounded-[24px] bg-white p-5 sm:p-6" aria-busy={busy || undefined}>
+        <div className="mb-4 flex items-center gap-3">
+          <span className={`grid h-7 w-7 place-items-center rounded-full text-[12.5px] font-bold ${compact ? 'bg-ink text-white' : 'bg-red text-white'}`}>{compact ? '✓' : '1'}</span>
+          <b className="text-[16px] font-semibold text-ink">Your email</b>
+        </div>
         <label htmlFor={`${id}-email`} className="text-[14px] font-semibold text-ink">Email Address</label>
         <div className="relative mt-2">
           <Mail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" aria-hidden="true" />

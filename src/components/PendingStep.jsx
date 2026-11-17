@@ -22,19 +22,19 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
   }, [left]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section className="text-center">
+    <section>
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative mx-auto grid h-20 w-20 place-items-center rounded-full bg-red-tint text-red">
+        className="relative grid h-16 w-16 place-items-center rounded-full bg-red-tint text-red">
         <motion.span className="absolute inset-0 rounded-full border-2 border-red" initial={{ scale: 1, opacity: .6 }} animate={{ scale: 1.5, opacity: 0 }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
-        <Clock className="h-10 w-10" strokeWidth={2.4} aria-hidden="true" />
+        <Clock className="h-8 w-8" strokeWidth={2.4} aria-hidden="true" />
       </motion.div>
 
-      <h1 ref={h} tabIndex={-1} className="mt-7 text-[38px] outline-none sm:text-[48px]">Payment <span className="text-red">Pending.</span></h1>
-      <p className="mx-auto mt-3 max-w-[26rem] text-[16px] leading-relaxed text-body">
+      <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">Payment <span className="text-red">Pending.</span></h1>
+      <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
         We’re waiting for your bank to confirm the payment. This usually takes a few minutes.
       </p>
 
-      <div className="mx-auto mt-7 rounded-[24px] bg-white p-5 text-left text-[14px]">
+      <div className="mt-6 rounded-[24px] bg-white p-5 sm:p-6 text-left text-[14px]">
         <ol className="space-y-3" aria-live="polite">
           <li className="flex items-center gap-3">
             <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-green-ok text-white"><Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" /></span>
@@ -57,7 +57,7 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
         </p>
       </div>
 
-      <p className="mt-6 text-[12px] text-muted">Prototype: confirms automatically in {left}s.</p>
+      <p className="mt-5 px-1 text-[12px] text-muted">Prototype: confirms automatically in {left}s.</p>
     </section>
   )
 }

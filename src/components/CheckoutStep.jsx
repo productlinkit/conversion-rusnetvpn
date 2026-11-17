@@ -1,9 +1,9 @@
 import { useId, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Lock, RotateCcw, RefreshCw } from 'lucide-react'
+import { Lock, Check } from 'lucide-react'
 import Button from './Button.jsx'
 import { PayLogo } from './PayLogos.jsx'
-import { PLANS, BEST_DEAL, money, renewalDate } from '../lib/plans.js'
+import { PLANS, BEST_DEAL, money } from '../lib/plans.js'
 import { validateCard, demoOutcome } from '../lib/card.js'
 
 const CARD_FIELDS = [
@@ -12,11 +12,21 @@ const CARD_FIELDS = [
   { key: 'cvv', label: 'CVV', placeholder: '123', autoComplete: 'cc-csc' },
 ]
 
-const reveal = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { duration: .35 } }
+const reveal = (d = 0) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: .4, delay: d } })
 
-// Opens under the email field once the address is known not to have a
-// subscription. Kept deliberately short for thumbs: one list of plans, the card
-// fields, one total, one button.
+function CardHead({ n, title, right }) {
+  return (
+    <div className="mb-4 flex items-center gap-3">
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-red text-[12.5px] font-bold text-white">{n}</span>
+      <b className="flex-1 text-[16px] font-semibold text-ink">{title}</b>
+      {right}
+    </div>
+  )
+}
+
+// Opens under the email card once the address is known not to have a
+// subscription: a grid of plan tiles, then one card with the card fields,
+// the total and the button. The order summary lives in the sidebar.
 export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
   const id = useId()
   const plan = PLANS.find((p) => p.id === planId)
@@ -40,37 +50,36 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
   }
 
   return (
-    // On desktop the form dissolves into the grid App sets up, so the plans sit
-    // under the email and the card and total fill the right column, without scrolling.
-    <form onSubmit={submit} noValidate className="mt-9 lg:contents">
-      <motion.div {...reveal} className="lg:col-start-1 lg:mt-5">
-        <h2 className="text-[24px] tracking-[-.02em] lg:text-[20px]">Choose your <span className="text-red">plan.</span></h2>
-
-        {/* plans: longest first, so the best deal is the first thing the thumb meets */}
-        <fieldset disabled={charging} className="mt-5 lg:mt-3">
+    <form onSubmit={submit} noValidate className="mt-4 space-y-4">
+      {/* plans as bento tiles: the selected one turns deep red */}
+      <motion.div {...reveal()} className="rounded-[24px] bg-white p-5 sm:p-6">
+        <CardHead n="2" title="Choose your plan" />
+        <fieldset disabled={charging}>
           <legend className="sr-only">Plan</legend>
-          <div className="grid gap-2 lg:gap-1.5">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {[...PLANS].reverse().map((p) => {
               const sel = p.id === planId
-              const weekly = p.id === '1w'
+              const best = p.id === BEST_DEAL
               return (
                 <label key={p.id}
-                  className={`flex min-h-[60px] cursor-pointer items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition lg:min-h-[52px] lg:py-1.5 has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ink ${sel ? 'border-ink ring-1 ring-ink' : 'border-transparent hover:border-ink/25'}`}>
+                  className={`relative flex cursor-pointer flex-col rounded-[20px] p-4 transition has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ink ${best ? 'col-span-2 sm:col-span-1' : ''} ${sel ? 'on-dark bg-deep text-white shadow-[0_18px_30px_-18px_rgba(94,10,18,.9)]' : 'bg-paper text-ink hover:bg-red-tint'}`}>
                   <input type="radio" name={`${id}-plan`} value={p.id} checked={sel} onChange={() => setPlanId(p.id)} className="sr-only" />
-                  <span className={`grid h-5 w-5 flex-none place-items-center rounded-full border-2 ${sel ? 'border-red' : 'border-line-ui'}`}>
-                    {sel && <span className="h-2.5 w-2.5 rounded-full bg-red" />}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <b className="text-[15.5px] font-semibold text-ink">{p.label}</b>
-                      {p.id === BEST_DEAL && <span className="rounded-full bg-red px-2 py-[3px] text-[9.5px] font-bold uppercase leading-none tracking-[.06em] text-white">Best deal</span>}
-                    </span>
-                    <span className="mt-0.5 block text-[12.5px] text-muted">
-                      {weekly ? 'Billed weekly' : `${money(p.perMonth)}/mo`}
-                      {p.saving > 0 && <span className="font-semibold text-green-text"> · Save {p.saving}%</span>}
+                  <span className="flex items-center justify-between gap-2">
+                    <b className="text-[14.5px] font-semibold">{p.label}</b>
+                    <span className={`grid h-5 w-5 flex-none place-items-center rounded-full ${sel ? 'bg-white text-deep' : 'border-2 border-line-ui/60'}`}>
+                      {sel && <Check className="h-3 w-3" strokeWidth={3.4} aria-hidden="true" />}
                     </span>
                   </span>
-                  <b className="tnum flex-none text-[16.5px] font-bold text-ink">{money(p.price)}</b>
+                  <b className="tnum mt-3 text-[24px] font-bold leading-none tracking-[-.03em]">{money(p.price)}</b>
+                  <span className={`mt-1.5 text-[12.5px] ${sel ? 'text-white/75' : 'text-muted'}`}>
+                    {p.id === '1w' ? 'Billed weekly' : `${money(p.perMonth)}/mo`}
+                  </span>
+                  {(best || p.saving > 0) && (
+                    <span className="mt-3 flex flex-wrap gap-1.5">
+                      {best && <span className={`rounded-full px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] ${sel ? 'bg-red text-white' : 'bg-red text-white'}`}>Best deal</span>}
+                      {p.saving > 0 && <span className={`rounded-full px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] ${sel ? 'bg-white/15 text-white' : 'bg-green-tint text-green-text'}`}>Save {p.saving}%</span>}
+                    </span>
+                  )}
                 </label>
               )
             })}
@@ -78,14 +87,12 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
         </fieldset>
       </motion.div>
 
-      <motion.div {...reveal} className="mt-7 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0">
-        {/* card details */}
+      {/* card details + total */}
+      <motion.div {...reveal(.06)} className="rounded-[24px] bg-white p-5 sm:p-6">
+        <CardHead n="3" title="Card details" right={<PayLogo id="card" className="h-[16px] w-auto flex-none" />} />
         <fieldset disabled={charging}>
-          <legend className="flex w-full items-center justify-between text-[14px] font-semibold text-ink">
-            Card details
-            <PayLogo id="card" className="h-[16px] w-auto flex-none" />
-          </legend>
-          <div className="mt-2.5 grid grid-cols-2 gap-x-2 gap-y-3">
+          <legend className="sr-only">Card details</legend>
+          <div className="grid grid-cols-2 gap-x-2.5 gap-y-3">
             {CARD_FIELDS.map((f) => {
               const err = cardErrors[f.key]
               return (
@@ -101,7 +108,7 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
                     onChange={(e) => changeCard(f, e.target.value)}
                     aria-invalid={!!err || undefined}
                     aria-describedby={err ? `${id}-${f.key}-err` : undefined}
-                    className={`tnum mt-1.5 h-14 w-full rounded-2xl lg:h-12 border bg-white px-4 text-[16.5px] text-ink outline-none transition placeholder:text-muted/60 focus:border-ink focus:ring-4 focus:ring-ink/10 ${err ? 'border-red-text ring-4 ring-red/10' : 'border-line-ui/50'}`}
+                    className={`tnum mt-1.5 h-[52px] w-full rounded-2xl border bg-paper px-4 text-[16.5px] text-ink outline-none transition placeholder:text-muted/60 focus:border-ink focus:bg-white focus:ring-4 focus:ring-ink/10 ${err ? 'border-red-text ring-4 ring-red/10' : 'border-transparent'}`}
                   />
                   {err && <p id={`${id}-${f.key}-err`} role="alert" className="mt-1.5 text-[13px] font-medium text-red-text">{err}</p>}
                 </div>
@@ -111,40 +118,21 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
           <p className="mt-3 text-[12px] text-muted">Prototype: card details aren’t sent or stored. In production these fields come from the payment provider.</p>
         </fieldset>
 
-        {/* summary */}
-        <aside aria-labelledby={`${id}-sum`} className="mt-7 lg:mt-3">
-          {/* the LP's deep-red bento tile */}
-          <div className="on-dark rounded-[24px] bg-deep p-5 text-white lg:p-5">
-            <h2 id={`${id}-sum`} className="sr-only">Order summary</h2>
-            <div className="flex items-end justify-between">
-              <span>
-                <span className="block text-[14px] font-semibold">Total today</span>
-                <span className="block text-[12.5px] text-white/75">RusVPN · {plan.label}</span>
-              </span>
-              <span className="tnum text-[30px] font-bold leading-none tracking-[-.035em]">{money(plan.price)}</span>
-            </div>
-
-            <ul className="mt-4 space-y-2 border-t border-white/15 pt-4 text-[12.5px] leading-snug text-white/85 lg:mt-3 lg:space-y-1 lg:pt-3">
-              <li className="flex gap-2"><RefreshCw className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />
-                Renews at {money(plan.price)} {plan.every} from {renewalDate(plan)}. Cancel anytime.</li>
-              <li className="flex gap-2"><RotateCcw className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />
-                30-day money-back guarantee.</li>
-            </ul>
-
-            <div className="max-lg:hidden">
-              <Button type="submit" variant="light" className="mt-4 w-full" busy={charging} busyLabel="Processing…">Pay {money(plan.price)}</Button>
-            </div>
-            <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-[11.5px] leading-relaxed text-white/75 lg:mt-2">
-              <Lock className="mt-[2px] h-3 w-3 flex-none" aria-hidden="true" />
-              Secure payment. We never see your card number.
-            </p>
-          </div>
-        </aside>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-ink/[.07] pt-5 max-lg:hidden">
+          <span>
+            <span className="block text-[13px] text-muted">Total today · RusVPN {plan.label}</span>
+            <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</b>
+          </span>
+          <Button type="submit" className="min-w-[240px]" busy={charging} busyLabel="Processing…">Pay {money(plan.price)}</Button>
+        </div>
+        <p className="mt-3 flex items-center gap-1.5 text-[11.5px] text-muted lg:justify-end">
+          <Lock className="h-3 w-3 flex-none" aria-hidden="true" /> Secure payment. 30-day money-back guarantee.
+        </p>
       </motion.div>
 
       {/* mobile: one big button under the thumb */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink/[.08] bg-paper/95 px-5 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur-lg lg:hidden">
-        <div className="mx-auto max-w-[520px]">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink/[.08] bg-paper/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur-lg lg:hidden">
+        <div className="mx-auto max-w-[760px]">
           <Button type="submit" className="w-full" busy={charging} busyLabel="Processing…">Pay {money(plan.price)}</Button>
         </div>
       </div>

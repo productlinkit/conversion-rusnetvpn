@@ -67,10 +67,10 @@ export default function AccessStep({ email, account, plan }) {
 
   return (
     <section>
-      <h1 className="text-[32px] sm:text-[42px]">Your access is <span className="text-red">ready.</span></h1>
-      <p className="mt-3 text-[15.5px] leading-relaxed text-body">Install the app, log in with {isNew ? 'the password we emailed' : 'your password'}, and press Connect.</p>
+      <h1 className="px-1 text-[32px] sm:text-[42px]">Your access is <span className="text-red">ready.</span></h1>
+      <p className="mt-2 px-1 text-[15.5px] leading-relaxed text-body">Install the app, log in with {isNew ? 'the password we emailed' : 'your password'}, and press Connect.</p>
 
-      <ol className="mt-7 space-y-3 rounded-[24px] bg-white p-5" aria-live="polite">
+      <ol className="mt-6 space-y-3 rounded-[24px] bg-white p-5 sm:p-6" aria-live="polite">
         {STEPS.map((s, i) => {
           const ok = i < done
           return (
@@ -93,7 +93,7 @@ export default function AccessStep({ email, account, plan }) {
               {ordered.map(({ id, label, sub, icon: Icon }) => (
                 <li key={id} className={id === mine ? 'col-span-2 sm:col-span-3' : ''}>
                   <a href="#" onClick={(e) => { e.preventDefault(); track('app_download_clicked', { platform: id }) }}
-                    className={`flex items-center gap-3 rounded-2xl border p-3.5 transition max-sm:gap-2.5 max-sm:px-3 hover:border-ink/40 ${id === mine ? 'border-ink bg-ink text-white hover:bg-ink-2' : 'border-ink/10 bg-white text-ink'}`}>
+                    className={`flex items-center gap-3 rounded-[20px] border p-4 transition max-sm:gap-2.5 max-sm:px-3 hover:border-ink/40 ${id === mine ? 'border-deep bg-deep text-white hover:bg-deep-2' : 'border-transparent bg-white text-ink'}`}>
                     <Icon className="h-5 w-5 flex-none" aria-hidden="true" />
                     <span className="min-w-0 flex-1">
                       <b className="block text-[14px] font-semibold">{label}</b>
