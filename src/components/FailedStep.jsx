@@ -10,14 +10,14 @@ export default function FailedStep({ email, plan, txId, onRetry }) {
   useEffect(() => { h.current?.focus() }, [])
 
   return (
-    <section className="pt-3 sm:pt-0">
+    <section className="pt-3 max-sm:text-center sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="grid h-16 w-16 place-items-center rounded-full bg-red text-white shadow-[0_20px_40px_-18px_rgba(225,29,42,.8)]">
+        className="grid h-16 w-16 place-items-center max-sm:mx-auto rounded-full bg-red text-white shadow-[0_20px_40px_-18px_rgba(225,29,42,.8)]">
         <X className="h-8 w-8" strokeWidth={3} aria-hidden="true" />
       </motion.div>
 
       <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">Payment <span className="text-red">Failed.</span></h1>
-      <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
+      <p className="mt-2 max-w-[34rem] px-1 max-sm:mx-auto text-[16px] leading-relaxed text-body">
         Your bank declined the payment. You haven’t been charged.
       </p>
 

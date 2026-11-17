@@ -49,8 +49,8 @@ export default function EmailStep({ initial = '', account, compact = false, lock
 
   return (
     <section aria-labelledby={`${id}-h`}>
-      <h1 id={`${id}-h`} className={`px-1 sm:text-[42px] ${compact ? 'text-[26px]' : 'text-[30px]'}`}>Let’s get you <em className="not-italic text-red">connected.</em></h1>
-      <p className={`mt-1.5 px-1 text-[15px] leading-relaxed text-body sm:mt-2 sm:text-[15.5px] ${compact ? 'max-sm:hidden' : ''}`}>
+      <h1 id={`${id}-h`} className={`px-1 max-sm:text-center sm:text-[42px] ${compact ? 'text-[26px]' : 'text-[30px]'}`}>Let’s get you <em className="not-italic text-red">connected.</em></h1>
+      <p className={`mt-1.5 px-1 text-[15px] max-sm:text-center leading-relaxed text-body sm:mt-2 sm:text-[15.5px] ${compact ? 'max-sm:hidden' : ''}`}>
         {compact ? 'Pick a plan and pay by card. Access arrives by email.' : 'Enter your email address to get started.'}
       </p>
 

@@ -84,7 +84,7 @@ export default function Landing({ onStart }) {
 
           {/* A: the message, on the LP's deep-red tile */}
           <motion.section {...tile(0)} aria-labelledby="hero-h"
-            className="on-dark relative isolate flex flex-none flex-col overflow-hidden rounded-[24px] p-5 text-white sm:p-7 wide:col-span-5 wide:row-span-2 wide:justify-between wide:rounded-[28px] lg:p-10 short:col-span-1! short:justify-center! short:p-5!"
+            className="on-dark relative isolate flex flex-none flex-col overflow-hidden rounded-[24px] p-5 text-white sm:p-7 wide:col-span-5 wide:row-span-2 wide:justify-between wide:rounded-[28px] lg:p-10 short:col-span-1! short:justify-center! short:p-5! max-sm:items-center max-sm:text-center"
             style={{ background: 'radial-gradient(120% 90% at 0% 0%, #8E1420 0%, #5E0A12 55%, #3F060C 100%)' }}>
             <span aria-hidden="true" className="pointer-events-none absolute -bottom-40 -right-32 -z-10 h-[420px] w-[420px] rounded-full border border-white/10" />
             <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -right-16 -z-10 h-[260px] w-[260px] rounded-full border border-white/10" />
@@ -99,7 +99,7 @@ export default function Landing({ onStart }) {
               <h1 id="hero-h" className="text-[clamp(28px,8vw,38px)] text-balance sm:text-[46px] lg:text-[clamp(44px,4.2vw,64px)] short:text-[clamp(22px,3.8vw,30px)]!">
                 Your privacy, <em className="not-italic text-red-soft">switched on in a tap.</em>
               </h1>
-              <p className="mt-3 max-w-[40ch] text-[14px] leading-[1.6] text-white/80 sm:text-[15.5px] lg:mt-5 lg:text-[16.5px] low:hidden short:hidden!">
+              <p className="mt-3 max-w-[40ch] text-[14px] max-sm:mx-auto leading-[1.6] text-white/80 sm:text-[15.5px] lg:mt-5 lg:text-[16.5px] low:hidden short:hidden!">
                 Stay protected with encrypted VPN connections designed to keep your online activity more private.
               </p>
               <ul className="mt-5 hidden space-y-2 wide:block short:hidden!">

@@ -67,8 +67,8 @@ export default function AccessStep({ email, account, plan }) {
 
   return (
     <section>
-      <h1 className="px-1 text-[32px] sm:text-[42px]">Your access is <span className="text-red">ready.</span></h1>
-      <p className="mt-2 px-1 text-[15.5px] leading-relaxed text-body">Install the app, log in with {isNew ? 'the password we emailed' : 'your password'}, and press Connect.</p>
+      <h1 className="px-1 text-[32px] max-sm:text-center sm:text-[42px]">Your access is <span className="text-red">ready.</span></h1>
+      <p className="mt-2 px-1 text-[15.5px] max-sm:text-center leading-relaxed text-body">Install the app, log in with {isNew ? 'the password we emailed' : 'your password'}, and press Connect.</p>
 
       <ol className="mt-6 space-y-3 rounded-[24px] bg-white p-5 sm:p-6" aria-live="polite">
         {STEPS.map((s, i) => {
@@ -88,7 +88,7 @@ export default function AccessStep({ email, account, plan }) {
       <AnimatePresence>
         {ready && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }}>
-            <h2 className="mt-9 text-[18px] tracking-[-.02em]">Download RusnetVPN</h2>
+            <h2 className="mt-9 text-[18px] max-sm:text-center tracking-[-.02em]">Download RusnetVPN</h2>
             <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
               {ordered.map(({ id, label, sub, icon: Icon }) => (
                 <li key={id} className={id === mine ? 'col-span-2 sm:col-span-3' : ''}>

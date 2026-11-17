@@ -22,15 +22,15 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
   }, [left]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section className="pt-3 sm:pt-0">
+    <section className="pt-3 max-sm:text-center sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative ml-3 mt-2 grid h-16 w-16 sm:ml-2 place-items-center rounded-full bg-red-tint text-red">
+        className="relative mx-auto mt-2 grid h-16 w-16 sm:mx-0 sm:ml-2 place-items-center rounded-full bg-red-tint text-red">
         <motion.span className="absolute inset-0 rounded-full border-2 border-red" initial={{ scale: 1, opacity: .6 }} animate={{ scale: 1.5, opacity: 0 }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
         <Clock className="h-8 w-8" strokeWidth={2.4} aria-hidden="true" />
       </motion.div>
 
       <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">Payment <span className="text-red">Pending.</span></h1>
-      <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
+      <p className="mt-2 max-w-[34rem] px-1 max-sm:mx-auto text-[16px] leading-relaxed text-body">
         We’re waiting for your bank to confirm the payment. This usually takes a few minutes.
       </p>
 

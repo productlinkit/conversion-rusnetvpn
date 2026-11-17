@@ -12,15 +12,15 @@ export default function SuccessStep({ email, account, plan, txId, onAccess }) {
   useEffect(() => { h.current?.focus() }, [])
 
   return (
-    <section className="pt-3 sm:pt-0">
+    <section className="pt-3 max-sm:text-center sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative ml-3 mt-2 grid h-16 w-16 sm:ml-2 place-items-center rounded-full bg-green-ok text-white shadow-[0_20px_40px_-18px_rgba(18,183,106,.8)]">
+        className="relative mx-auto mt-2 grid h-16 w-16 sm:mx-0 sm:ml-2 place-items-center rounded-full bg-green-ok text-white shadow-[0_20px_40px_-18px_rgba(18,183,106,.8)]">
         <motion.span className="absolute inset-0 rounded-full border-2 border-green-ok" initial={{ scale: 1, opacity: .8 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 1.2, delay: .2 }} />
         <Check className="h-8 w-8" strokeWidth={3} aria-hidden="true" />
       </motion.div>
 
       <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">You’re All <span className="text-red">Set.</span></h1>
-      <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
+      <p className="mt-2 max-w-[34rem] px-1 max-sm:mx-auto text-[16px] leading-relaxed text-body">
         {isNew
           ? 'Your RusnetVPN account is ready. Check your email for your password.'
           : 'Your subscription is active. Log in with your existing password.'}
