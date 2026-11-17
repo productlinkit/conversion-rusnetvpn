@@ -22,14 +22,14 @@ export default function SuccessStep({ email, account, plan, txId, onAccess }) {
       <h1 ref={h} tabIndex={-1} className="mt-6 px-1 text-[34px] outline-none sm:text-[44px]">You’re All <span className="text-red">Set.</span></h1>
       <p className="mt-2 max-w-[34rem] px-1 text-[16px] leading-relaxed text-body">
         {isNew
-          ? 'Your RusVPN account is ready. Check your email for your password.'
+          ? 'Your RusnetVPN account is ready. Check your email for your password.'
           : 'Your subscription is active. Log in with your existing password.'}
       </p>
 
       <div className="mt-6 rounded-[24px] bg-white p-5 sm:p-6 text-left text-[14px]">
         <dl className="space-y-2.5">
           <TransactionId id={txId} />
-          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusVPN · {plan.label}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusnetVPN · {plan.label}</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-muted">Payment method</dt><dd className="font-medium">Credit card</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-muted">Next renewal</dt><dd className="font-medium">{renewalDate(plan)}</dd></div>
           <div className="flex items-end justify-between gap-3 border-t border-ink/[.07] pt-3"><dt className="font-semibold text-ink">Total paid</dt><dd className="tnum text-[26px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</dd></div>
@@ -40,7 +40,7 @@ export default function SuccessStep({ email, account, plan, txId, onAccess }) {
         </p>
       </div>
 
-      <Button className="mt-6 w-full sm:w-auto sm:min-w-[280px]" onClick={onAccess}>Access RusVPN</Button>
+      <Button className="mt-6 w-full sm:w-auto sm:min-w-[280px]" onClick={onAccess}>Access RusnetVPN</Button>
       <p className="mt-3 px-1 text-[12px] text-muted">Prototype: payment and email are simulated.</p>
     </section>
   )

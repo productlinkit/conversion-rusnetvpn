@@ -146,7 +146,7 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-ink/[.07] pt-5 max-lg:hidden">
           <span>
-            <span className="block text-[13px] text-muted">Total today · RusVPN {plan.label}</span>
+            <span className="block text-[13px] text-muted">Total today · RusnetVPN {plan.label}</span>
             <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</b>
           </span>
           <Button type="submit" className="min-w-[240px]" busy={charging} busyLabel="Processing…">Pay {money(plan.price)}</Button>
@@ -161,7 +161,7 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink/[.08] bg-white/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-12px_30px_-20px_rgba(31,20,22,.35)] backdrop-blur-lg lg:hidden">
         <div className="mx-auto flex max-w-[760px] items-center gap-3">
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-[12px] text-muted">RusVPN · {plan.label}</span>
+            <span className="block truncate text-[12px] text-muted">RusnetVPN · {plan.label}</span>
             <b className="tnum block text-[20px] font-bold tracking-[-.03em] text-ink">{money(plan.price)}</b>
           </span>
           <Button type="submit" className="ml-auto flex-1 max-w-[260px]" busy={charging} busyLabel="Processing…">Pay now</Button>

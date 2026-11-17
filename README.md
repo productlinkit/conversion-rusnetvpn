@@ -1,4 +1,4 @@
-# RusVPN single-screen LP — versi bento
+# RusnetVPN single-screen LP — versi bento
 
 Campaign LP satu layar dengan flow yang sama seperti `singlelp-rusnetvpn`
 (LP → email → pilih plan + kartu → pending / gagal → sukses → akses), tapi

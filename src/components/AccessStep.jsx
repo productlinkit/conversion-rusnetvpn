@@ -88,7 +88,7 @@ export default function AccessStep({ email, account, plan }) {
       <AnimatePresence>
         {ready && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }}>
-            <h2 className="mt-9 text-[18px] tracking-[-.02em]">Download RusVPN</h2>
+            <h2 className="mt-9 text-[18px] tracking-[-.02em]">Download RusnetVPN</h2>
             <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
               {ordered.map(({ id, label, sub, icon: Icon }) => (
                 <li key={id} className={id === mine ? 'col-span-2 sm:col-span-3' : ''}>
@@ -111,14 +111,14 @@ export default function AccessStep({ email, account, plan }) {
                   <motion.div key="on" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-3" role="status">
                     <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-green-tint text-green-text"><Power className="h-5 w-5" aria-hidden="true" /></span>
                     <div>
-                      <b className="text-[15px] font-semibold text-ink">RusVPN is activated on this device</b>
+                      <b className="text-[15px] font-semibold text-ink">RusnetVPN is activated on this device</b>
                       <p className="mt-0.5 text-[13.5px] text-body">Open the app and press Connect. It picks the fastest server near you automatically. (Simulated in this prototype.)</p>
                     </div>
                   </motion.div>
                 ) : (
                   <motion.div key="off" exit={{ opacity: 0 }}>
                     <p className="text-[14px] text-body">Already installed? Activate it here.</p>
-                    <Button className="mt-4 w-full" busy={busy} busyLabel="Activating…" onClick={activate}>Open RusVPN</Button>
+                    <Button className="mt-4 w-full" busy={busy} busyLabel="Activating…" onClick={activate}>Open RusnetVPN</Button>
                   </motion.div>
                 )}
               </AnimatePresence>

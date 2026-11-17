@@ -47,7 +47,7 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
         </ol>
         <dl className="mt-4 space-y-2.5 border-t border-ink/[.07] pt-4">
           <TransactionId id={txId} />
-          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusVPN · {plan.label}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusnetVPN · {plan.label}</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-muted">Status</dt><dd className="flex items-center gap-1.5 font-medium text-red"><span className="h-2 w-2 animate-pulse rounded-full bg-red" aria-hidden="true" />Pending</dd></div>
           <div className="flex items-end justify-between gap-3 border-t border-ink/[.07] pt-3"><dt className="font-semibold text-ink">Amount</dt><dd className="tnum text-[26px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</dd></div>
         </dl>

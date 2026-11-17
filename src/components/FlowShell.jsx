@@ -26,7 +26,10 @@ export default function FlowShell({ stage = 0, plan, onBack, children }) {
               <ArrowLeft className="h-[18px] w-[18px]" />
             </button>
           )}
-          <Logo className="h-5 w-auto text-white sm:h-6 lg:h-7" />
+          {/* the logo's red shield and "VPN" need a light ground to read on deep red */}
+          <span className="inline-flex items-center rounded-full bg-white px-3 py-1.5 lg:px-4 lg:py-2">
+            <Logo className="h-[18px] w-auto sm:h-5 lg:h-6" />
+          </span>
           {/* phones: where you are, in words, instead of the stepper */}
           <span className="ml-auto text-right leading-tight lg:hidden">
             <span className="block text-[11px] font-medium text-white/65">Step {stage + 1} of {STEPS.length}</span>
@@ -64,7 +67,7 @@ export default function FlowShell({ stage = 0, plan, onBack, children }) {
           <section aria-label="Order summary" className="mt-auto hidden rounded-[22px] bg-white/[.07] p-5 ring-1 ring-white/15 lg:block">
             <span className="min-w-0">
               <span className="block text-[12px] font-medium uppercase tracking-[.06em] text-white/60">Your order</span>
-              <span className="block truncate text-[14px] font-semibold lg:mt-1 lg:text-[16px]">RusVPN · {plan.label}</span>
+              <span className="block truncate text-[14px] font-semibold lg:mt-1 lg:text-[16px]">RusnetVPN · {plan.label}</span>
             </span>
             <span className="tnum flex-none text-[22px] font-bold leading-none tracking-[-.03em] lg:mt-3 lg:block lg:text-[40px]">
               {money(plan.price)}

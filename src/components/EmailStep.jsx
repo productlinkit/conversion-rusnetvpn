@@ -124,7 +124,7 @@ export default function EmailStep({ initial = '', account, compact = false, lock
             <BadgeCheck className="mt-0.5 h-5 w-5 flex-none text-green-text" aria-hidden="true" />
             <div>
               <b className="font-semibold text-ink">You already have an active subscription.</b>
-              <p className="mt-0.5">There’s nothing to pay. Log in to start using RusVPN.</p>
+              <p className="mt-0.5">There’s nothing to pay. Log in to start using RusnetVPN.</p>
             </div>
           </div>
         )}

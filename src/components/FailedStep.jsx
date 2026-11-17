@@ -24,7 +24,7 @@ export default function FailedStep({ email, plan, txId, onRetry }) {
       <div className="mt-6 rounded-[24px] bg-white p-5 sm:p-6 text-left text-[14px]">
         <dl className="space-y-2.5">
           <TransactionId id={txId} />
-          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusVPN · {plan.label}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-muted">Plan</dt><dd className="font-medium">RusnetVPN · {plan.label}</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-muted">Account</dt><dd className="min-w-0 truncate font-medium">{email}</dd></div>
           <div className="flex justify-between gap-3"><dt className="text-muted">Status</dt><dd className="font-medium text-red-text">Failed</dd></div>
           <div className="flex items-end justify-between gap-3 border-t border-ink/[.07] pt-3"><dt className="font-semibold text-ink">Amount</dt><dd className="tnum text-[26px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</dd></div>
