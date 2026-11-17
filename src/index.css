@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/* Two-column hero: real desktops, plus phones held sideways (too short to stack). */
+@custom-variant wide {
+  @media (min-width: 1024px) { @slot; }
+  @media (orientation: landscape) and (max-height: 540px) and (min-width: 560px) { @slot; }
+}
+/* Phones held sideways: everything gets tighter. */
+@custom-variant short (@media (orientation: landscape) and (max-height: 540px) and (min-width: 560px));
+/* Portrait screens with little height (small phones, browser chrome open). */
+@custom-variant low (@media (max-height: 700px));
+
+/* Bento palette from lp-rusnetvpn (src/styles/47-bento.css): blush page, white
+   cards, a deep-red tile for accents, warm near-black ink, Plus Jakarta Sans.
+   Token names are kept from the first campaign page so every screen picks the
+   new palette up without renaming classes. */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-red: #E12730;
+  --color-red-2: #F0353F;
+  --color-red-deep: #A5121A;
+  --color-red-fill: #C81E27;
+  --color-red-fill-2: #D92A33;
+  --color-red-text: #BE1A23;
+  --color-red-tint: #FCE9EA;
+  --color-red-soft: #FFC9CC;
+
+  --color-deep: #5E0A12;
+  --color-deep-2: #7A0E18;
+
+  --color-ink: #1F1416;
+  --color-ink-2: #3A2A2D;
+  --color-body: #5E5054;
+  /* the LP's #8A7B7F is too light for small text on white; this keeps the hue at 5:1 */
+  --color-muted: #6E5F63;
+  --color-paper: #F5F1F1;
+  --color-paper-2: #FFF4F4;
+  --color-line-ui: #8C7D81;
+  --color-green-ok: #12B76A;
+  --color-green-text: #087040;
+  --color-green-tint: #E9F9F0;
+  --color-amber: #F79009;
+  --color-amber-tint: #FFF4E5;
+  --color-amber-text: #B54708;
+
+  --ease-enter: cubic-bezier(.21,.78,.26,1);
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 { letter-spacing: -.035em; line-height: 1.04; font-weight: 600; }
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
+  /* on the photo card and the deep-red tile the ring turns white */
+  .on-dark :focus-visible { outline-color: #fff; }
+  input[type=email]:focus-visible { outline: none; }
+  [tabindex="-1"]:focus { outline: none; }
+}
+
+/* ---------- hero photo card ---------- */
+.hero-shade {
+  background:
+    linear-gradient(90deg, rgba(40,4,10,.86) 0%, rgba(40,4,10,.55) 42%, rgba(40,4,10,0) 72%),
+    linear-gradient(0deg, rgba(40,4,10,.6), rgba(40,4,10,0) 48%);
+}
+@media (max-width: 1023px) {
+  .hero-shade {
+    background: linear-gradient(0deg, rgba(40,4,10,.94) 0%, rgba(40,4,10,.7) 48%, rgba(40,4,10,.08) 78%, rgba(40,4,10,.35) 100%);
+  }
+}
+.glass {
+  background: rgba(30,6,10,.55);
+  border: 1px solid rgba(255,255,255,.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.tag {
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.28);
+}
+
+/* ---------- buttons: the LP's pill with a round red arrow chip ---------- */
+.btn-ink { background: var(--color-ink); color: #fff; }
+.btn-ink:hover:not(:disabled) { background: #000; }
+.btn-light { background: #fff; color: var(--color-ink); }
+.btn-light:hover:not(:disabled) { background: #FFF4F4; }
+.btn { transition: background .2s, translate .2s, box-shadow .3s; }
+.btn:hover:not(:disabled) { translate: 0 -1px; }
+.btn .arw { transition: transform .5s var(--ease-enter); }
+.btn:hover .arw { transform: rotate(45deg); }
+
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* signal bars inside the connection widget */
+@keyframes bar { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+.bars i { transform-origin: bottom; animation: bar 1.9s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

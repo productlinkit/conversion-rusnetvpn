@@ -1,0 +1,139 @@
+import { useEffect, useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Check, Loader2, Download, Smartphone, Monitor, Laptop, Package, Power, RotateCw } from 'lucide-react'
+import Button from './Button.jsx'
+import { ACCOUNT } from '../lib/account.js'
+import { renewalDate } from '../lib/plans.js'
+import { track, EVENTS } from '../lib/track.js'
+
+// Download targets offered on the existing site.
+const APPS = [
+  { id: 'ios', label: 'App Store', sub: 'iPhone & iPad', icon: Smartphone },
+  { id: 'android', label: 'Google Play', sub: 'Android', icon: Smartphone },
+  { id: 'windows', label: 'Windows', sub: 'Download for PC', icon: Monitor },
+  { id: 'macos', label: 'macOS', sub: 'Download for Mac', icon: Laptop },
+  { id: 'apk', label: 'APK file', sub: 'Direct download', icon: Package },
+]
+
+function detect() {
+  const ua = navigator.userAgent
+  if (/iPhone|iPad|iPod/.test(ua)) return 'ios'
+  if (/Android/.test(ua)) return 'android'
+  if (/Mac/.test(ua)) return 'macos'
+  if (/Win/.test(ua)) return 'windows'
+  return 'windows'
+}
+
+export default function AccessStep({ email, account, plan }) {
+  const isNew = account === ACCOUNT.NEW
+  // What the backend does after the provider's "payment succeeded" webhook, or
+  // after login for someone who is already subscribed.
+  const STEPS = useMemo(() => {
+    if (account === ACCOUNT.SUBSCRIBED) return [`Logged in as ${email}`, 'Subscription active']
+    const active = `Subscription active · ${plan.label}, renews ${renewalDate(plan)}`
+    if (account === ACCOUNT.REGISTERED) return ['Payment confirmed', active, `Linked to ${email}`]
+    return ['Payment confirmed', `Account created for ${email}`, active, 'Password sent to your email']
+  }, [email, account, plan])
+
+  const [done, setDone] = useState(0)
+  const [activated, setActivated] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+  const mine = detect()
+  const ordered = [...APPS].sort((a, b) => (a.id === mine ? -1 : b.id === mine ? 1 : 0))
+
+  useEffect(() => {
+    if (done >= STEPS.length) return
+    const t = setTimeout(() => setDone((n) => n + 1), 550)
+    return () => clearTimeout(t)
+  }, [done, STEPS.length])
+
+  useEffect(() => {
+    if (!cooldown) return
+    const t = setTimeout(() => setCooldown((n) => n - 1), 1000)
+    return () => clearTimeout(t)
+  }, [cooldown])
+
+  const ready = done >= STEPS.length
+
+  function activate() {
+    setBusy(true)
+    setTimeout(() => {
+      setBusy(false)
+      setActivated(true)
+      track(EVENTS.VPN_ACTIVATED, { plan: plan.id, platform: mine })
+    }, 1200)
+  }
+
+  return (
+    <section>
+      <h1 className="text-[32px] sm:text-[42px]">Your access is <span className="text-red">ready.</span></h1>
+      <p className="mt-3 text-[15.5px] leading-relaxed text-body">Install the app, log in with {isNew ? 'the password we emailed' : 'your password'}, and press Connect.</p>
+
+      <ol className="mt-7 space-y-3 rounded-[24px] bg-white p-5" aria-live="polite">
+        {STEPS.map((s, i) => {
+          const ok = i < done
+          return (
+            <li key={s} className="flex items-center gap-3 text-[14px]">
+              <span className={`grid h-6 w-6 flex-none place-items-center rounded-full transition-colors ${ok ? 'bg-green-ok text-white' : 'bg-paper-2 text-muted'}`}>
+                {ok ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" /> : i === done ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : null}
+              </span>
+              <span className={`min-w-0 break-words ${ok ? 'text-ink' : 'text-muted'}`}>{s}{!ok && <span className="sr-only"> (pending)</span>}</span>
+            </li>
+          )
+        })}
+      </ol>
+      <p className="mt-2 text-[12px] text-muted">Prototype: these steps are simulated. In production they come from the backend.</p>
+
+      <AnimatePresence>
+        {ready && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }}>
+            <h2 className="mt-9 text-[18px] tracking-[-.02em]">Download RusVPN</h2>
+            <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              {ordered.map(({ id, label, sub, icon: Icon }) => (
+                <li key={id} className={id === mine ? 'col-span-2 sm:col-span-3' : ''}>
+                  <a href="#" onClick={(e) => { e.preventDefault(); track('app_download_clicked', { platform: id }) }}
+                    className={`flex items-center gap-3 rounded-2xl border p-3.5 transition max-sm:gap-2.5 max-sm:px-3 hover:border-ink/40 ${id === mine ? 'border-ink bg-ink text-white hover:bg-ink-2' : 'border-ink/10 bg-white text-ink'}`}>
+                    <Icon className="h-5 w-5 flex-none" aria-hidden="true" />
+                    <span className="min-w-0 flex-1">
+                      <b className="block text-[14px] font-semibold">{label}</b>
+                      <span className={`block text-[11.5px] ${id === mine ? 'text-white/70' : 'text-muted'}`}>{id === mine ? 'Recommended for this device' : sub}</span>
+                    </span>
+                    <Download className={`h-4 w-4 flex-none opacity-70 ${id === mine ? '' : 'max-sm:hidden'}`} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 rounded-[24px] bg-white p-5">
+              <AnimatePresence mode="wait" initial={false}>
+                {activated ? (
+                  <motion.div key="on" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-3" role="status">
+                    <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-green-tint text-green-text"><Power className="h-5 w-5" aria-hidden="true" /></span>
+                    <div>
+                      <b className="text-[15px] font-semibold text-ink">RusVPN is activated on this device</b>
+                      <p className="mt-0.5 text-[13.5px] text-body">Open the app and press Connect. It picks the fastest server near you automatically. (Simulated in this prototype.)</p>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div key="off" exit={{ opacity: 0 }}>
+                    <p className="text-[14px] text-body">Already installed? Activate it here.</p>
+                    <Button className="mt-4 w-full" busy={busy} busyLabel="Activating…" onClick={activate}>Open RusVPN</Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <p className="mt-6 text-center text-[13px] text-muted">
+              {isNew ? 'Didn’t get the email?' : 'Forgot your password?'}{' '}
+              <button disabled={cooldown > 0} onClick={() => { setCooldown(30); track(isNew ? 'password_resent' : 'password_reset_requested') }}
+                className="inline-flex items-center gap-1 font-semibold text-ink underline decoration-red/60 underline-offset-2 disabled:cursor-default disabled:text-muted disabled:no-underline">
+                <RotateCw className="h-3.5 w-3.5" aria-hidden="true" />{cooldown > 0 ? `Sent — resend in ${cooldown}s` : isNew ? 'Resend password' : 'Reset password'}
+              </button>
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  )
+}
