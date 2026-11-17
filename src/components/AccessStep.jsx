@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, Download, Smartphone, Monitor, Laptop, Package, Power, RotateCw } from 'lucide-react'
 import Button from './Button.jsx'
 import { ACCOUNT } from '../lib/account.js'
-import { renewalDate } from '../lib/plans.js'
+import { trialEndDate, TRIAL_DAYS } from '../lib/plans.js'
 import { track, EVENTS } from '../lib/track.js'
 
 // Download targets offered on the existing site.
@@ -30,9 +30,9 @@ export default function AccessStep({ email, account, plan }) {
   // after login for someone who is already subscribed.
   const STEPS = useMemo(() => {
     if (account === ACCOUNT.SUBSCRIBED) return [`Logged in as ${email}`, 'Subscription active']
-    const active = `Subscription active · ${plan.label}, renews ${renewalDate(plan)}`
-    if (account === ACCOUNT.REGISTERED) return ['Payment confirmed', active, `Linked to ${email}`]
-    return ['Payment confirmed', `Account created for ${email}`, active, 'Password sent to your email']
+    const active = `${TRIAL_DAYS}-day free trial active · ${plan.label} starts ${trialEndDate()}`
+    if (account === ACCOUNT.REGISTERED) return ['Card confirmed', active, `Linked to ${email}`]
+    return ['Card confirmed', `Account created for ${email}`, active, 'Password sent to your email']
   }, [email, account, plan])
 
   const [done, setDone] = useState(0)

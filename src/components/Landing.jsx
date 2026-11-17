@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lock, Check, Server, Smartphone, Monitor, Laptop } from 'lucide-react'
+import { Lock, Check, Server, Smartphone, Monitor, Laptop, Gift } from 'lucide-react'
 import Logo from './Logo.jsx'
 import Button from './Button.jsx'
 import PhoneMockup, { useDemoLoop, LOOP_MS } from './PhoneMockup.jsx'
@@ -39,8 +39,8 @@ const tile = (d = 0) => ({
 function Cta({ onStart, light = false, className = '' }) {
   return (
     <div className={`flex flex-col gap-2.5 ${className}`}>
-      <Button variant={light ? 'light' : 'ink'} className="w-full sm:w-auto" onClick={onStart}>Protect My Privacy</Button>
-      <p className={`text-[12.5px] leading-snug ${light ? 'text-white/75' : 'text-center text-muted'}`}>Choose a plan • Pay securely • Get access by email</p>
+      <Button variant={light ? 'light' : 'ink'} className="w-full sm:w-auto" onClick={onStart}>Start 7-day free trial</Button>
+      <p className={`text-[12.5px] leading-snug ${light ? 'text-white/75' : 'text-center text-muted'}`}>No charge today • Cancel anytime • Access by email</p>
     </div>
   )
 }
@@ -90,12 +90,19 @@ export default function Landing({ onStart }) {
             <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 -right-16 -z-10 h-[260px] w-[260px] rounded-full border border-white/10" />
 
             <ul className="hidden flex-wrap gap-2 wide:flex short:hidden!" aria-label="Highlights">
-              {['No logs', 'Encrypted', '30-day refund'].map((t) => (
+              {['No logs', 'Encrypted', 'Cancel anytime'].map((t) => (
                 <li key={t} className="tag rounded-full px-3 py-1.5 text-[12.5px] font-medium">{t}</li>
               ))}
             </ul>
 
             <div>
+              {/* the offer, before the headline, on every screen size */}
+              <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35, duration: .5 }}
+                className="mb-3 inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-3.5 text-[12.5px] font-bold text-deep shadow-[0_10px_24px_-12px_rgba(0,0,0,.6)] lg:mb-5 lg:text-[13.5px] short:mb-2!">
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-red text-white"><Gift className="h-3.5 w-3.5" strokeWidth={2.4} aria-hidden="true" /></span>
+                7-day free trial
+                <span className="font-semibold text-muted max-[360px]:hidden">· $0 today</span>
+              </motion.span>
               <h1 id="hero-h" className="text-[clamp(28px,8vw,38px)] text-balance sm:text-[46px] lg:text-[clamp(44px,4.2vw,64px)] short:text-[clamp(22px,3.8vw,30px)]!">
                 Your privacy, <em className="not-italic text-red-soft">switched on in a tap.</em>
               </h1>

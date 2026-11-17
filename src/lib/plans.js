@@ -22,8 +22,19 @@ export const BEST_DEAL = '1y'
 
 export const money = (n) => '$' + n.toFixed(2)
 
+// Free trial: the card is taken today but nothing is charged until the trial
+// ends; the plan's price is charged then, unless cancelled before.
+export const TRIAL_DAYS = 7
+
+const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+const addDays = (n, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + n); return d }
+
+// the day the trial ends and the first charge is taken
+export function trialEndDate(from = new Date()) {
+  return fmt(addDays(TRIAL_DAYS, from))
+}
+
+// the renewal after the first paid period
 export function renewalDate(plan, from = new Date()) {
-  const d = new Date(from)
-  d.setDate(d.getDate() + plan.days)
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  return fmt(addDays(TRIAL_DAYS + plan.days, from))
 }

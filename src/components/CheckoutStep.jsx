@@ -1,9 +1,9 @@
 import { useId, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Lock, Check } from 'lucide-react'
+import { Lock, Check, Gift } from 'lucide-react'
 import Button from './Button.jsx'
 import { PayLogo } from './PayLogos.jsx'
-import { PLANS, BEST_DEAL, money } from '../lib/plans.js'
+import { PLANS, BEST_DEAL, TRIAL_DAYS, money, trialEndDate } from '../lib/plans.js'
 import { validateCard, demoOutcome } from '../lib/card.js'
 
 // Number keypad on phones, and the value shaped as it is typed so nobody has
@@ -59,6 +59,10 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
       {/* plans as bento tiles: the selected one turns deep red */}
       <motion.div {...reveal()} id="plans" className="scroll-mt-3 rounded-[24px] bg-white p-4 sm:p-6">
         <CardHead n="2" title="Choose your plan" />
+        <p className="mb-3 flex items-center gap-2.5 rounded-2xl bg-green-tint px-3.5 py-2.5 text-[13px] text-ink-2">
+          <span className="grid h-7 w-7 flex-none place-items-center rounded-full bg-green-ok text-white"><Gift className="h-3.5 w-3.5" strokeWidth={2.4} aria-hidden="true" /></span>
+          <span><b className="font-semibold text-green-text">Every plan starts with a {TRIAL_DAYS}-day free trial.</b> $0 today, cancel anytime before {trialEndDate()}.</span>
+        </p>
         <fieldset disabled={charging}>
           <legend className="sr-only">Plan</legend>
           <div className="grid gap-2 sm:grid-cols-3 sm:gap-2.5">
@@ -144,27 +148,35 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
           <p className="mt-3 text-[12px] text-muted">Prototype: card details aren’t sent or stored. In production these fields come from the payment provider.</p>
         </fieldset>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-ink/[.07] pt-5 max-lg:hidden">
-          <span>
-            <span className="block text-[13px] text-muted">Total today · RusnetVPN {plan.label}</span>
-            <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.price)}</b>
-          </span>
-          <Button type="submit" className="min-w-[240px]" busy={charging} busyLabel="Processing…">Pay {money(plan.price)}</Button>
+        {/* what happens to the card, said plainly before the button */}
+        <div className="mt-5 rounded-2xl bg-paper p-4 text-[13px] max-lg:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-semibold text-ink">Due today</span>
+            <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">$0.00</b>
+          </div>
+          <div className="mt-2 flex items-center justify-between gap-3 text-muted">
+            <span>From {trialEndDate()} · RusnetVPN {plan.label}</span>
+            <span className="tnum font-semibold text-ink">{money(plan.price)} {plan.every}</span>
+          </div>
         </div>
-        <p className="mt-3 flex items-center gap-1.5 text-[11.5px] text-muted lg:justify-end">
-          <Lock className="h-3 w-3 flex-none" aria-hidden="true" /> Secure payment. 30-day money-back guarantee.
+        <div className="mt-4 flex justify-end max-lg:hidden">
+          <Button type="submit" className="min-w-[280px]" busy={charging} busyLabel="Starting trial…">Start {TRIAL_DAYS}-day free trial</Button>
+        </div>
+        <p className="mt-3 flex items-start gap-1.5 text-[11.5px] leading-relaxed text-muted lg:justify-end lg:text-right">
+          <Lock className="mt-[2px] h-3 w-3 flex-none" aria-hidden="true" />
+          <span>Your card is charged {money(plan.price)} on {trialEndDate()} unless you cancel before. Then {plan.every}. 30-day money-back guarantee.</span>
         </p>
       </motion.div>
 
-      {/* mobile: one big button under the thumb */}
-      {/* mobile: total + one big button under the thumb */}
+      {/* mobile: what's due today + one big button under the thumb */}
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink/[.08] bg-white/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-12px_30px_-20px_rgba(31,20,22,.35)] backdrop-blur-lg lg:hidden">
         <div className="mx-auto flex max-w-[760px] items-center gap-3">
           <span className="min-w-0 leading-tight">
-            <span className="block truncate text-[12px] text-muted">RusnetVPN · {plan.label}</span>
-            <b className="tnum block text-[20px] font-bold tracking-[-.03em] text-ink">{money(plan.price)}</b>
+            <span className="block truncate text-[12px] text-muted">Due today</span>
+            <b className="tnum block text-[20px] font-bold tracking-[-.03em] text-ink">$0.00</b>
+            <span className="block truncate text-[11px] text-muted">then {money(plan.price)}</span>
           </span>
-          <Button type="submit" className="ml-auto flex-1 max-w-[260px]" busy={charging} busyLabel="Processing…">Pay now</Button>
+          <Button type="submit" className="ml-auto flex-1 max-w-[260px]" busy={charging} busyLabel="Starting…">Start free trial</Button>
         </div>
       </div>
     </form>

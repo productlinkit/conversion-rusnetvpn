@@ -10,7 +10,7 @@ import SuccessStep from './components/SuccessStep.jsx'
 import AccessStep from './components/AccessStep.jsx'
 import EventLog from './components/EventLog.jsx'
 import { ACCOUNT } from './lib/account.js'
-import { PLANS, DEFAULT_PLAN } from './lib/plans.js'
+import { PLANS, DEFAULT_PLAN, TRIAL_DAYS } from './lib/plans.js'
 import { track, EVENTS } from './lib/track.js'
 import { newTransactionId } from './lib/transaction.js'
 
@@ -100,7 +100,7 @@ export default function App() {
     }
     if (outcome === 'pending') {
       settled.current = 'pending'
-      track(EVENTS.PAYMENT_PENDING, { plan: planId, value: plan.price, currency: 'USD', account, transaction_id: id })
+      track(EVENTS.PAYMENT_PENDING, { plan: planId, trial_days: TRIAL_DAYS, charged_today: 0, value: plan.price, currency: 'USD', account, transaction_id: id })
       go('pending', { replace: true })
       return
     }
@@ -109,7 +109,7 @@ export default function App() {
 
   function completePayment(id) {
     settled.current = 'success'
-    track(EVENTS.PAYMENT_COMPLETED, { plan: planId, value: plan.price, currency: 'USD', account, transaction_id: id })
+    track(EVENTS.PAYMENT_COMPLETED, { plan: planId, trial_days: TRIAL_DAYS, charged_today: 0, value: plan.price, currency: 'USD', account, transaction_id: id })
     go('success', { replace: true })
   }
 

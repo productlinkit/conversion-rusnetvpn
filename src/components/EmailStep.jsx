@@ -51,7 +51,7 @@ export default function EmailStep({ initial = '', account, compact = false, lock
     <section aria-labelledby={`${id}-h`}>
       <h1 id={`${id}-h`} className={`px-1 max-sm:text-center sm:text-[42px] ${compact ? 'text-[26px]' : 'text-[30px]'}`}>Let’s get you <em className="not-italic text-red">connected.</em></h1>
       <p className={`mt-1.5 px-1 text-[15px] max-sm:text-center leading-relaxed text-body sm:mt-2 sm:text-[15.5px] ${compact ? 'max-sm:hidden' : ''}`}>
-        {compact ? 'Pick a plan and pay by card. Access arrives by email.' : 'Enter your email address to get started.'}
+        {compact ? 'Pick a plan and start your 7-day free trial. $0 today.' : 'Enter your email address to get started.'}
       </p>
 
       {compact ? (
@@ -61,7 +61,7 @@ export default function EmailStep({ initial = '', account, compact = false, lock
           <span className="min-w-0 flex-1 leading-tight">
             <b className="block truncate text-[15px] font-semibold text-ink">{value}</b>
             <span className="mt-0.5 block text-[12.5px] text-muted">
-              {account === ACCOUNT.REGISTERED ? 'Existing account · password stays the same' : 'New account · password sent after payment'}
+              {account === ACCOUNT.REGISTERED ? 'Existing account · password stays the same' : 'New account · password sent when your trial starts'}
             </span>
           </span>
           <button type="button" onClick={onEdit} disabled={locked}
@@ -107,7 +107,7 @@ export default function EmailStep({ initial = '', account, compact = false, lock
           </p>
         ) : account === ACCOUNT.NEW ? (
           <p id={`${id}-hint`} role="status" className="mt-2 flex items-start gap-1.5 text-[13.5px] text-muted">
-            <UserPlus className="mt-[2px] h-4 w-4 flex-none" aria-hidden="true" /> We’ll create your account and email your password after payment.
+            <UserPlus className="mt-[2px] h-4 w-4 flex-none" aria-hidden="true" /> We’ll create your account and email your password when your trial starts.
           </p>
         ) : account === ACCOUNT.REGISTERED ? (
           <p id={`${id}-hint`} role="status" className="mt-2 flex items-start gap-1.5 text-[13.5px] text-muted">
