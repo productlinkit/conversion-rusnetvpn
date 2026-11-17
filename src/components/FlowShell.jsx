@@ -1,6 +1,6 @@
 import { ArrowLeft, Check, Lock, RotateCcw, RefreshCw, ShieldCheck, Gift } from 'lucide-react'
 import Logo from './Logo.jsx'
-import { money, trialEndDate, TRIAL_DAYS } from '../lib/plans.js'
+import { money, trialEndDate, renewalDate, TRIAL_DAYS } from '../lib/plans.js'
 
 const STEPS = [
   { label: 'Your email', hint: 'Find or create your account' },
@@ -66,19 +66,22 @@ export default function FlowShell({ stage = 0, plan, onBack, children }) {
               <span className="block text-[12px] font-medium uppercase tracking-[.06em] text-white/60">Your order</span>
               <span className="block truncate text-[14px] font-semibold lg:mt-1 lg:text-[16px]">RusnetVPN · {plan.label}</span>
             </span>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11.5px] font-bold text-deep">
-              <Gift className="h-3.5 w-3.5 text-red" aria-hidden="true" /> {TRIAL_DAYS}-day free trial
-            </span>
+            {plan.trial && (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11.5px] font-bold text-deep">
+                <Gift className="h-3.5 w-3.5 text-red" aria-hidden="true" /> {TRIAL_DAYS} days free
+              </span>
+            )}
             <span className="mt-3 flex items-end gap-2">
-              <span className="tnum text-[40px] font-bold leading-none tracking-[-.03em]">$0.00</span>
+              <span className="tnum text-[40px] font-bold leading-none tracking-[-.03em]">{money(plan.dueToday)}</span>
               <span className="pb-1 text-[12.5px] text-white/65">due today</span>
             </span>
             <span className="mt-1.5 block text-[13px] text-white/80">
-              then <b className="tnum font-semibold text-white">{money(plan.price)}</b> {plan.every} from {trialEndDate()}
-              {plan.id !== '1w' && <span className="text-white/60"> · {money(plan.perMonth)}/mo</span>}
+              {plan.trial
+                ? <>then <b className="tnum font-semibold text-white">{money(plan.then.price)}</b>/month from {trialEndDate()}</>
+                : <>renews {plan.every} on {renewalDate(plan)}{plan.id !== '1w' && <span className="text-white/60"> · {money(plan.perMonth)}/mo</span>}</>}
             </span>
             <ul className="mt-4 space-y-2 border-t border-white/15 pt-4 text-[12.5px] leading-snug text-white/80">
-              <li className="flex gap-2"><RefreshCw className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />Cancel anytime before {trialEndDate()} and you pay nothing.</li>
+              <li className="flex gap-2"><RefreshCw className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />{plan.trial ? `Cancel anytime before ${trialEndDate()} and you pay nothing.` : 'Cancel anytime.'}</li>
               <li className="flex gap-2"><RotateCcw className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />30-day money-back guarantee.</li>
               <li className="flex gap-2"><ShieldCheck className="mt-[2px] h-3.5 w-3.5 flex-none text-red-soft" aria-hidden="true" />Encrypted connection, strict no-logs policy.</li>
             </ul>

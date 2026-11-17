@@ -9,22 +9,32 @@ const RAW = [
   { id: '1y',  label: '1 Year',   name: '1-Year plan',   per: 'Year',     price: 47.99, months: 12,        term: 'year',     every: 'every year',     days: 365 },
 ]
 
-const monthly = RAW.find((p) => p.id === '1m').price
+const monthly = RAW.find((p) => p.id === '1m')
 
-export const PLANS = RAW.map((p) => {
+const PAID = RAW.map((p) => {
   const perMonth = p.price / p.months
-  const saving = Math.round((1 - perMonth / monthly) * 100)
-  return { ...p, perMonth, saving: saving > 0 ? saving : 0 }
+  const saving = Math.round((1 - perMonth / monthly.price) * 100)
+  return { ...p, perMonth, saving: saving > 0 ? saving : 0, dueToday: p.price }
 })
 
-export const DEFAULT_PLAN = '1y'
+// Free trial: its own plan. The card is taken today, nothing is charged for
+// TRIAL_DAYS, then it continues as the 1-Month plan unless cancelled before.
+// The paid plans above are charged today and have no trial.
+export const TRIAL_DAYS = 7
+const TRIAL = {
+  id: 'trial', label: `${TRIAL_DAYS}-Day Free Trial`, name: 'Free trial', trial: true,
+  price: 0, dueToday: 0, perMonth: 0, saving: 0, days: TRIAL_DAYS,
+  then: monthly, // what it becomes
+  every: monthly.every,
+}
+
+// shown in this order: the trial first, then longest plan to shortest
+export const PLANS = [TRIAL, ...[...PAID].reverse()]
+
+export const DEFAULT_PLAN = 'trial'
 export const BEST_DEAL = '1y'
 
 export const money = (n) => '$' + n.toFixed(2)
-
-// Free trial: the card is taken today but nothing is charged until the trial
-// ends; the plan's price is charged then, unless cancelled before.
-export const TRIAL_DAYS = 7
 
 const fmt = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 const addDays = (n, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + n); return d }
@@ -34,7 +44,12 @@ export function trialEndDate(from = new Date()) {
   return fmt(addDays(TRIAL_DAYS, from))
 }
 
-// the renewal after the first paid period
+// the next charge after today: the end of the trial, or the end of the paid term
 export function renewalDate(plan, from = new Date()) {
-  return fmt(addDays(TRIAL_DAYS + plan.days, from))
+  return fmt(addDays(plan.days, from))
+}
+
+// what the next charge will be
+export function nextCharge(plan) {
+  return plan.trial ? plan.then.price : plan.price
 }

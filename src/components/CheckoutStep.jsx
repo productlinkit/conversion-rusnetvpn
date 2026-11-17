@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Lock, Check, Gift } from 'lucide-react'
 import Button from './Button.jsx'
 import { PayLogo } from './PayLogos.jsx'
-import { PLANS, BEST_DEAL, TRIAL_DAYS, money, trialEndDate } from '../lib/plans.js'
+import { PLANS, BEST_DEAL, TRIAL_DAYS, money, trialEndDate, renewalDate, nextCharge } from '../lib/plans.js'
 import { validateCard, demoOutcome } from '../lib/card.js'
 
 // Number keypad on phones, and the value shaped as it is typed so nobody has
@@ -35,6 +35,7 @@ function CardHead({ n, title, right }) {
 export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
   const id = useId()
   const plan = PLANS.find((p) => p.id === planId)
+  const cta = plan.trial ? `Start ${TRIAL_DAYS}-day free trial` : `Pay ${money(plan.price)}`
   // Card details stay in this component: never lifted, tracked or sent anywhere.
   const [card, setCard] = useState({ number: '', expiry: '', cvv: '' })
   const [cardErrors, setCardErrors] = useState({})
@@ -59,19 +60,20 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
       {/* plans as bento tiles: the selected one turns deep red */}
       <motion.div {...reveal()} id="plans" className="scroll-mt-3 rounded-[24px] bg-white p-4 sm:p-6">
         <CardHead n="2" title="Choose your plan" />
-        <p className="mb-3 flex items-center gap-2.5 rounded-2xl bg-green-tint px-3.5 py-2.5 text-[13px] text-ink-2">
-          <span className="grid h-7 w-7 flex-none place-items-center rounded-full bg-green-ok text-white"><Gift className="h-3.5 w-3.5" strokeWidth={2.4} aria-hidden="true" /></span>
-          <span><b className="font-semibold text-green-text">Every plan starts with a {TRIAL_DAYS}-day free trial.</b> $0 today, cancel anytime before {trialEndDate()}.</span>
-        </p>
         <fieldset disabled={charging}>
           <legend className="sr-only">Plan</legend>
           <div className="grid gap-2 sm:grid-cols-3 sm:gap-2.5">
-            {[...PLANS].reverse().map((p) => {
+            {PLANS.map((p) => {
               const sel = p.id === planId
               const best = p.id === BEST_DEAL
+              const sub = p.trial ? `then ${money(p.then.price)}/month` : p.id === '1w' ? 'Billed weekly' : `${money(p.perMonth)}/mo`
+              const idle = p.trial ? 'bg-green-tint text-ink ring-1 ring-green-ok/40 hover:ring-green-ok' : 'bg-paper text-ink hover:bg-red-tint'
+              const badge = p.trial
+                ? <span className={`inline-flex items-center gap-1 rounded-full px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] ${sel ? 'bg-white text-green-text' : 'bg-green-ok text-white'}`}><Gift className="h-3 w-3" aria-hidden="true" />Free</span>
+                : best ? <span className="rounded-full bg-red px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] text-white">Best deal</span> : null
               return (
                 <label key={p.id}
-                  className={`relative flex cursor-pointer rounded-[18px] transition has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ink sm:flex-col sm:rounded-[20px] sm:p-4 ${sel ? 'on-dark bg-deep text-white shadow-[0_18px_30px_-18px_rgba(94,10,18,.9)]' : 'bg-paper text-ink hover:bg-red-tint'}`}>
+                  className={`relative flex cursor-pointer rounded-[18px] transition has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ink sm:flex-col sm:rounded-[20px] sm:p-4 ${sel ? 'on-dark bg-deep text-white shadow-[0_18px_30px_-18px_rgba(94,10,18,.9)]' : idle}`}>
                   <input type="radio" name={`${id}-plan`} value={p.id} checked={sel} onChange={() => setPlanId(p.id)} className="sr-only" />
 
                   {/* phones: one compact row per plan */}
@@ -82,14 +84,14 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
                     <span className="min-w-0 flex-1 leading-tight">
                       <span className="flex flex-wrap items-center gap-1.5">
                         <b className="text-[15px] font-semibold">{p.label}</b>
-                        {best && <span className="rounded-full bg-red px-1.5 py-[2px] text-[9.5px] font-bold uppercase tracking-[.05em] text-white">Best deal</span>}
+                        {badge}
                       </span>
                       <span className={`mt-0.5 block text-[12.5px] ${sel ? 'text-white/75' : 'text-muted'}`}>
-                        {p.id === '1w' ? 'Billed weekly' : `${money(p.perMonth)}/mo`}
+                        {sub}
                         {p.saving > 0 && <span className={`font-semibold ${sel ? 'text-white' : 'text-green-text'}`}> · Save {p.saving}%</span>}
                       </span>
                     </span>
-                    <b className="tnum flex-none text-[17px] font-bold tracking-[-.02em]">{money(p.price)}</b>
+                    <b className="tnum flex-none text-[17px] font-bold tracking-[-.02em]">{p.trial ? '$0' : money(p.price)}</b>
                   </span>
 
                   {/* tablets and up: a tile */}
@@ -99,13 +101,11 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
                       {sel && <Check className="h-3 w-3" strokeWidth={3.4} aria-hidden="true" />}
                     </span>
                   </span>
-                  <b className="tnum mt-3 hidden text-[24px] font-bold leading-none tracking-[-.03em] sm:block">{money(p.price)}</b>
-                  <span className={`mt-1.5 hidden text-[12.5px] sm:block ${sel ? 'text-white/75' : 'text-muted'}`}>
-                    {p.id === '1w' ? 'Billed weekly' : `${money(p.perMonth)}/mo`}
-                  </span>
-                  {(best || p.saving > 0) && (
+                  <b className="tnum mt-3 hidden text-[24px] font-bold leading-none tracking-[-.03em] sm:block">{p.trial ? '$0.00' : money(p.price)}</b>
+                  <span className={`mt-1.5 hidden text-[12.5px] sm:block ${sel ? 'text-white/75' : 'text-muted'}`}>{sub}</span>
+                  {(badge || p.saving > 0) && (
                     <span className="mt-3 hidden flex-wrap gap-1.5 sm:flex">
-                      {best && <span className={`rounded-full px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] ${sel ? 'bg-red text-white' : 'bg-red text-white'}`}>Best deal</span>}
+                      {badge}
                       {p.saving > 0 && <span className={`rounded-full px-2 py-[3px] text-[10px] font-bold uppercase tracking-[.06em] ${sel ? 'bg-white/15 text-white' : 'bg-green-tint text-green-text'}`}>Save {p.saving}%</span>}
                     </span>
                   )}
@@ -113,6 +113,12 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
               )
             })}
           </div>
+          {plan.trial && (
+            <p className="mt-3 flex items-start gap-2 rounded-2xl bg-green-tint px-3.5 py-2.5 text-[12.5px] leading-relaxed text-ink-2">
+              <Gift className="mt-[2px] h-3.5 w-3.5 flex-none text-green-text" aria-hidden="true" />
+              <span><b className="font-semibold text-green-text">{TRIAL_DAYS} days free, $0 today.</b> After {trialEndDate()} it continues as the 1-Month plan at {money(plan.then.price)}/month. Cancel anytime before and you pay nothing.</span>
+            </p>
+          )}
         </fieldset>
       </motion.div>
 
@@ -151,20 +157,22 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
         {/* what happens to the card, said plainly before the button */}
         <div className="mt-5 rounded-2xl bg-paper p-4 text-[13px] max-lg:hidden">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-semibold text-ink">Due today</span>
-            <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">$0.00</b>
+            <span className="font-semibold text-ink">Due today · RusnetVPN {plan.label}</span>
+            <b className="tnum text-[28px] font-bold leading-none tracking-[-.03em] text-ink">{money(plan.dueToday)}</b>
           </div>
           <div className="mt-2 flex items-center justify-between gap-3 text-muted">
-            <span>From {trialEndDate()} · RusnetVPN {plan.label}</span>
-            <span className="tnum font-semibold text-ink">{money(plan.price)} {plan.every}</span>
+            <span>{plan.trial ? `From ${trialEndDate()} · 1 Month plan` : `Renews ${renewalDate(plan)}`}</span>
+            <span className="tnum font-semibold text-ink">{money(nextCharge(plan))} {plan.every}</span>
           </div>
         </div>
         <div className="mt-4 flex justify-end max-lg:hidden">
-          <Button type="submit" className="min-w-[280px]" busy={charging} busyLabel="Starting trial…">Start {TRIAL_DAYS}-day free trial</Button>
+          <Button type="submit" className="min-w-[280px]" busy={charging} busyLabel={plan.trial ? 'Starting trial…' : 'Processing…'}>{cta}</Button>
         </div>
         <p className="mt-3 flex items-start gap-1.5 text-[11.5px] leading-relaxed text-muted lg:justify-end lg:text-right">
           <Lock className="mt-[2px] h-3 w-3 flex-none" aria-hidden="true" />
-          <span>Your card is charged {money(plan.price)} on {trialEndDate()} unless you cancel before. Then {plan.every}. 30-day money-back guarantee.</span>
+          <span>{plan.trial
+            ? `Nothing is charged today. Your card is charged ${money(plan.then.price)} on ${trialEndDate()} unless you cancel before, then every month.`
+            : `Secure payment. Renews at ${money(plan.price)} ${plan.every}, cancel anytime. 30-day money-back guarantee.`}</span>
         </p>
       </motion.div>
 
@@ -173,10 +181,10 @@ export default function CheckoutStep({ planId, setPlanId, charging, onPay }) {
         <div className="mx-auto flex max-w-[760px] items-center gap-3">
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-[12px] text-muted">Due today</span>
-            <b className="tnum block text-[20px] font-bold tracking-[-.03em] text-ink">$0.00</b>
-            <span className="block truncate text-[11px] text-muted">then {money(plan.price)}</span>
+            <b className="tnum block text-[20px] font-bold tracking-[-.03em] text-ink">{money(plan.dueToday)}</b>
+            <span className="block truncate text-[11px] text-muted">{plan.trial ? `then ${money(plan.then.price)}/mo` : plan.label}</span>
           </span>
-          <Button type="submit" className="ml-auto flex-1 max-w-[260px]" busy={charging} busyLabel="Starting…">Start free trial</Button>
+          <Button type="submit" className="ml-auto flex-1 max-w-[260px]" busy={charging} busyLabel={plan.trial ? 'Starting…' : 'Processing…'}>{plan.trial ? 'Start free trial' : 'Pay now'}</Button>
         </div>
       </div>
     </form>

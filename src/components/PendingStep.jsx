@@ -28,7 +28,9 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
       icon={Clock}
       pulse
       title={<>Payment <em className="not-italic text-red-soft">pending.</em></>}
-      lead="We’re waiting for your bank to confirm your card. This usually takes a few minutes. Nothing is charged today."
+      lead={plan.trial
+        ? 'We’re waiting for your bank to confirm your card. This usually takes a few minutes. Nothing is charged today.'
+        : 'We’re waiting for your bank to confirm the payment. This usually takes a few minutes.'}
       note={`Prototype: confirms automatically in ${left}s.`}
     >
       <ol className="space-y-3 rounded-2xl bg-paper p-4" aria-live="polite">
@@ -45,8 +47,8 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
         <TransactionId id={txId} />
         <Row label="Plan">RusnetVPN · {plan.label}</Row>
         <Row label="Status"><span className="inline-flex items-center gap-1.5 text-red"><span className="h-2 w-2 animate-pulse rounded-full bg-red" aria-hidden="true" />Pending</span></Row>
-        <Row label="After free trial">{money(plan.price)}</Row>
-        <Row label="Due today" strong>$0.00</Row>
+        {plan.trial && <Row label="After free trial">{money(plan.then.price)}/month</Row>}
+        <Row label={plan.trial ? 'Due today' : 'Amount'} strong>{money(plan.dueToday)}</Row>
       </dl>
       <p className="mt-5 flex items-center gap-2.5 rounded-2xl bg-paper p-3.5 text-[13px] text-ink-2">
         <span className="grid h-8 w-8 flex-none place-items-center rounded-full bg-white"><Mail className="h-4 w-4 text-red" aria-hidden="true" /></span>

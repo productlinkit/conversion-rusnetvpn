@@ -100,7 +100,7 @@ export default function App() {
     }
     if (outcome === 'pending') {
       settled.current = 'pending'
-      track(EVENTS.PAYMENT_PENDING, { plan: planId, trial_days: TRIAL_DAYS, charged_today: 0, value: plan.price, currency: 'USD', account, transaction_id: id })
+      track(EVENTS.PAYMENT_PENDING, { plan: planId, trial: !!plan.trial, ...(plan.trial && { trial_days: TRIAL_DAYS, predicted_value: plan.then.price }), charged_today: plan.dueToday, value: plan.dueToday, currency: 'USD', account, transaction_id: id })
       go('pending', { replace: true })
       return
     }
@@ -109,7 +109,7 @@ export default function App() {
 
   function completePayment(id) {
     settled.current = 'success'
-    track(EVENTS.PAYMENT_COMPLETED, { plan: planId, trial_days: TRIAL_DAYS, charged_today: 0, value: plan.price, currency: 'USD', account, transaction_id: id })
+    track(EVENTS.PAYMENT_COMPLETED, { plan: planId, trial: !!plan.trial, ...(plan.trial && { trial_days: TRIAL_DAYS, predicted_value: plan.then.price }), charged_today: plan.dueToday, value: plan.dueToday, currency: 'USD', account, transaction_id: id })
     go('success', { replace: true })
   }
 
