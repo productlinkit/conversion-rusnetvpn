@@ -20,7 +20,8 @@ export default function EmailStep({ initial = '', account, compact = false, lock
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  useEffect(() => { ref.current?.focus() }, [])
+  // focus the field on arrival, and again after "Change"
+  useEffect(() => { if (!compact) ref.current?.focus() }, [compact])
 
   const domain = value.split('@')[1]?.toLowerCase()
   const suggestion = domain && TYPOS[domain] ? value.split('@')[0] + '@' + TYPOS[domain] : null
@@ -48,12 +49,28 @@ export default function EmailStep({ initial = '', account, compact = false, lock
 
   return (
     <section aria-labelledby={`${id}-h`}>
-      <h1 id={`${id}-h`} className="px-1 text-[32px] sm:text-[42px]">Let’s get you <em className="not-italic text-red">connected.</em></h1>
-      <p className="mt-2 px-1 text-[15.5px] leading-relaxed text-body">
+      <h1 id={`${id}-h`} className={`px-1 sm:text-[42px] ${compact ? 'text-[26px]' : 'text-[30px]'}`}>Let’s get you <em className="not-italic text-red">connected.</em></h1>
+      <p className={`mt-1.5 px-1 text-[15px] leading-relaxed text-body sm:mt-2 sm:text-[15.5px] ${compact ? 'max-sm:hidden' : ''}`}>
         {compact ? 'Pick a plan and pay by card. Access arrives by email.' : 'Enter your email address to get started.'}
       </p>
 
-      <form onSubmit={submit} noValidate className="mt-6 rounded-[24px] bg-white p-5 sm:p-6" aria-busy={busy || undefined}>
+      {compact ? (
+        // confirmed: one row, so the plans come straight after it
+        <div className="mt-4 flex items-center gap-3 rounded-[20px] bg-white p-3.5 sm:mt-6 sm:p-4" role="status">
+          <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-ink text-white"><Mail className="h-4 w-4" aria-hidden="true" /></span>
+          <span className="min-w-0 flex-1 leading-tight">
+            <b className="block truncate text-[15px] font-semibold text-ink">{value}</b>
+            <span className="mt-0.5 block text-[12.5px] text-muted">
+              {account === ACCOUNT.REGISTERED ? 'Existing account · password stays the same' : 'New account · password sent after payment'}
+            </span>
+          </span>
+          <button type="button" onClick={onEdit} disabled={locked}
+            className="h-11 flex-none rounded-full bg-paper px-4 text-[13.5px] font-semibold text-ink transition hover:bg-red-tint disabled:opacity-50">
+            Change
+          </button>
+        </div>
+      ) : (
+      <form onSubmit={submit} noValidate className="mt-5 rounded-[24px] bg-white p-5 sm:mt-6 sm:p-6" aria-busy={busy || undefined}>
         <div className="mb-4 flex items-center gap-3">
           <span className={`grid h-7 w-7 place-items-center rounded-full text-[12.5px] font-bold ${compact ? 'bg-ink text-white' : 'bg-red text-white'}`}>{compact ? '✓' : '1'}</span>
           <b className="text-[16px] font-semibold text-ink">Your email</b>
@@ -115,6 +132,7 @@ export default function EmailStep({ initial = '', account, compact = false, lock
         {!account && <Button type="submit" busy={busy} busyLabel="Checking…" className="mt-7 w-full">Continue</Button>}
         {account === ACCOUNT.SUBSCRIBED && <Button className="mt-5 w-full" onClick={onLogin}>Login</Button>}
       </form>
+      )}
     </section>
   )
 }

@@ -22,9 +22,9 @@ export default function PendingStep({ email, plan, txId, onConfirmed }) {
   }, [left]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section>
+    <section className="pt-3 sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative grid h-16 w-16 place-items-center rounded-full bg-red-tint text-red">
+        className="relative ml-3 mt-2 grid h-16 w-16 sm:ml-2 place-items-center rounded-full bg-red-tint text-red">
         <motion.span className="absolute inset-0 rounded-full border-2 border-red" initial={{ scale: 1, opacity: .6 }} animate={{ scale: 1.5, opacity: 0 }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeOut' }} />
         <Clock className="h-8 w-8" strokeWidth={2.4} aria-hidden="true" />
       </motion.div>

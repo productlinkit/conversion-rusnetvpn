@@ -74,6 +74,10 @@ export default function App() {
       started.current = true
       track(EVENTS.CHECKOUT_STARTED, { plan: planId })
     }
+    // phones: bring the plans up under the thumb once they open
+    if (status !== ACCOUNT.SUBSCRIBED && window.innerWidth < 1024) {
+      setTimeout(() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250)
+    }
   }
 
   function onPay(outcome) {

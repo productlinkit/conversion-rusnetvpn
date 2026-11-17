@@ -10,7 +10,7 @@ export default function FailedStep({ email, plan, txId, onRetry }) {
   useEffect(() => { h.current?.focus() }, [])
 
   return (
-    <section>
+    <section className="pt-3 sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
         className="grid h-16 w-16 place-items-center rounded-full bg-red text-white shadow-[0_20px_40px_-18px_rgba(225,29,42,.8)]">
         <X className="h-8 w-8" strokeWidth={3} aria-hidden="true" />

@@ -12,9 +12,9 @@ export default function SuccessStep({ email, account, plan, txId, onAccess }) {
   useEffect(() => { h.current?.focus() }, [])
 
   return (
-    <section>
+    <section className="pt-3 sm:pt-0">
       <motion.div initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative grid h-16 w-16 place-items-center rounded-full bg-green-ok text-white shadow-[0_20px_40px_-18px_rgba(18,183,106,.8)]">
+        className="relative ml-3 mt-2 grid h-16 w-16 sm:ml-2 place-items-center rounded-full bg-green-ok text-white shadow-[0_20px_40px_-18px_rgba(18,183,106,.8)]">
         <motion.span className="absolute inset-0 rounded-full border-2 border-green-ok" initial={{ scale: 1, opacity: .8 }} animate={{ scale: 1.6, opacity: 0 }} transition={{ duration: 1.2, delay: .2 }} />
         <Check className="h-8 w-8" strokeWidth={3} aria-hidden="true" />
       </motion.div>
